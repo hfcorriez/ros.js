@@ -10,8 +10,8 @@ See api documents  on [redis.io](http://redis.io/)
 
 ## Usage
 
-    `<script type="text/javascript">
-    $.storage.set('test', 'mytestvalue');
-    console.log($.storage.get('test'));  // log "mytestvalue"
-    // ... more usage will add.
-    </script>`
+`<script type="text/javascript">
+$.storage.set('test', 'mytestvalue');
+console.log($.storage.get('test'));  // log "mytestvalue"
+// ... more usage will add.
+</script>`
