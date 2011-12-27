@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Jquery Storage Exapmle</title>
+<script type="text/javascript" src="../libs/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../libs/jquery.storage.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $.storage.set('key', 'value');
+    $.storage.get('key', 'default');
+    $.storage.hset('result', 'key', $.storage.get('key'));
+    
+	$.storage.rpush('list', 1);
+	$.storage.lpush('list', 'message 2');
+	$.storage.rpush('list', {data: 'message 3', id: 3});
+	$.storage.hset('result', 'list', $.storage.get('list'));
+	
+	$.storage.hset('hash', 'name', 'hfcorriez');
+	$.storage.hset('hash', 'sexy', 'male');
+	$.storage.hset('result', 'hash', $.storage.get('hash'));
+	
+    $.storage.sadd('set', 'hfcorriez');
+    $.storage.sadd('set', 'fdream');
+    $.storage.sadd('set', 'hfcorriez');
+    $.storage.hset('result', 'set', $.storage.get('set'));
+	
+	console.log($.storage.get('result'));
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>
