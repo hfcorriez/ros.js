@@ -12,9 +12,12 @@
 (function(jQuery) {
 	this.data = {};
 	
+	/*
+	 * Base
+	 */
 	this.exists = function(key)
 	{
-		return typeof this.data[key] != 'undefined';
+		return key in this.data;
 	};
 	
 	this.get = function(key, d)
@@ -34,6 +37,44 @@
 		delete this.data[key];
 	};
 	
+	this.incr = function(key)
+	{
+		
+	};
+	
+	this.incrby = function(key, count)
+	{
+		
+	};
+	
+	this.decr = function(key)
+	{
+		
+	};
+	
+	this.decrby = function(key, count)
+	{
+		
+	};
+	
+	this.getset = function(key, value)
+	{
+		
+	};
+	
+	this.setnx = function(key, value)
+	{
+		
+	};
+	
+	this.append = function(key, value)
+	{
+		
+	};
+	
+	/*
+	 * Set
+	 */
 	this.sindex = function(key, value)
 	{
 		if(!this.exists(key)) return -1;
@@ -83,6 +124,39 @@
 		return this.data[key].length;
 	};
 	
+	this.smove = function(key1, key2, value)
+	{
+		
+	};
+	
+	this.smembers = function(key)
+	{
+		return this.get(key);
+	};
+	
+	this.sinter = function(key1, key2)
+	{
+		
+	};
+	
+	this.sunion = function(key1, key2)
+	{
+		
+	};
+	
+	this.sdiff = function(key1, key2)
+	{
+		
+	};
+	
+	this.srandmember = function(key)
+	{
+		
+	};
+	
+	/*
+	 * Hash
+	 */
 	this.hexists = function(key, field)
 	{
 		return typeof this.data[key][field] != 'undefined';
@@ -118,6 +192,29 @@
 		return delete this.data[key][field];
 	};
 	
+	this.hgetall = function(key)
+	{
+		return this.get(key);
+	};
+	
+	this.hincrby = function(key, field, count)
+	{
+		
+	};
+	
+	this.hdecrby = function(key, field, count)
+	{
+		
+	};
+	
+	this.hkeys = function(key)
+	{
+		
+	};
+	
+	/*
+	 * List
+	 */
 	this.llen = function(key)
 	{
 		if(!this.exists(key)) return 0;
@@ -158,6 +255,74 @@
 		if(!this.exists(key)) return false;
 		
 		return this.data[key].pop();
+	};
+	
+	this.lrange = function(key, min, max)
+	{
+		
+	};
+	
+	this.ltrim = function(key, min, max)
+	{
+		
+	};
+	
+	this.lindex = function(key, index)
+	{
+		
+	};
+	
+	this.lset = function(key, index, value)
+	{
+		
+	};
+	
+	this.lrem = function(key, index, value)
+	{
+		
+	};
+	
+	/**
+	 * Sorted Sets
+	 */
+	this.zadd = function(key, value, score)
+	{
+		
+	};
+	
+	this.zrem = function(key, vlaue)
+	{
+		
+	};
+	
+	this.zcard = function(key)
+	{
+		
+	};
+	
+	this.zincr = function(key, value)
+	{
+		
+	};
+	
+	this.zincrby = function(key, value, score)
+	{
+		
+	};
+	
+	this.zrange = function(key, min, max)
+	{
+		
+	};
+	
+	this.zscore = function(key, value)
+	{
+		
+	};
+	
+	this.zrank = function(key, value)
+	{
+		
 	};
 	
 	jQuery.storage = this;
