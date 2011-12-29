@@ -39,37 +39,52 @@
 	
 	this.incr = function(key)
 	{
-		
+		this.incrby(key, 1);
 	};
 	
 	this.incrby = function(key, count)
 	{
-		
+		if(this.exists(key)) data[key] += parseInt(count);
+		else data[key] = count;
+		return true;
 	};
 	
 	this.decr = function(key)
 	{
-		
+		return this.decrby(key, 1);
 	};
 	
 	this.decrby = function(key, count)
 	{
-		
+		if(this.exists(key)) data[key] -= parseInt(count);
+		else data[key] = -count;
+		return true;
 	};
 	
 	this.getset = function(key, value)
 	{
+		if(this.exists(key)) return_value = this.get(key);
+		else return_value = false;
 		
+		this.set(key, value);
+		return return_value;
 	};
 	
 	this.setnx = function(key, value)
 	{
-		
+		if(!this.exists(key)) 
+		{
+			data[key] = value;
+			return true;
+		}
+		return false;
 	};
 	
 	this.append = function(key, value)
 	{
-		
+		if(!this.exists(key)) data[key] = "" + value;
+		else data[key] += "" + value;
+		return true;
 	};
 	
 	/*
@@ -126,7 +141,9 @@
 	
 	this.smove = function(key1, key2, value)
 	{
-		
+		this.srem(key1, value);
+		this.sadd(key2, value);
+		return true;
 	};
 	
 	this.smembers = function(key)
@@ -199,17 +216,36 @@
 	
 	this.hincrby = function(key, field, count)
 	{
+		if(typeof count == 'undefined') count = 1;
 		
+		if(!this.hget(key, field))  data[key][field] = parseInt(count);
+		else data[key][field] += parseInt(count);
+		
+		return true;
 	};
 	
 	this.hdecrby = function(key, field, count)
 	{
+		if(typeof count == 'undefined') count = 1;
 		
+		if(!this.hget(key, field)) data[key][field] = -parseInt(count);
+		else data[key][field] -= parseInt(count);
+		
+		return true;
 	};
 	
 	this.hkeys = function(key)
 	{
+		if(!this.exists(key)) return [];
 		
+		keys = [];
+		i = 0;
+		for(field in data[key])
+		{
+			keys[i] = field;
+			i++;
+		}
+		return keys;
 	};
 	
 	/*
@@ -264,22 +300,25 @@
 	
 	this.ltrim = function(key, min, max)
 	{
+		if(!this.exists(key)) return false;
 		
+		data[key] = data[key].slice(min, max);
+		return true;
 	};
 	
 	this.lindex = function(key, index)
 	{
+		if(!this.exists(key)) return false;
 		
+		return data[key][index]; 
 	};
 	
 	this.lset = function(key, index, value)
 	{
+		if(!this.exists(key)) return false;
 		
-	};
-	
-	this.lrem = function(key, index, value)
-	{
-		
+		data[key][index] = value; 
+		return true;
 	};
 	
 	/**

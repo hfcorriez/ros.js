@@ -25,7 +25,15 @@ $(document).ready(function(){
     $.storage.sadd('set', 'fdream');
     $.storage.sadd('set', 'hfcorriez');
     $.storage.hset('result', 'set', $.storage.get('set'));
-	
+    
+    $.storage.incr('incr');
+    $.storage.incrby('incr', 2);
+    $.storage.hset('result', 'incr', $.storage.get('incr'));
+    
+    $.storage.append('append', 'hello');
+    $.storage.append('append', ' world');
+    $.storage.hset('result', 'append', $.storage.get('append'));
+    
 	console.log($.storage.get('result'));
 });
 </script>
