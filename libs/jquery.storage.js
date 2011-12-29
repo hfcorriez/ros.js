@@ -10,31 +10,31 @@
  *
  */
 (function(jQuery) {
-	this.data = {};
+	var data = {};
 	
 	/*
 	 * Base
 	 */
 	this.exists = function(key)
 	{
-		return key in this.data;
+		return key in data;
 	};
 	
 	this.get = function(key, d)
 	{
 		if(!this.exists(key)) return d;
 		
-		return this.data[key];
+		return data[key];
 	},
 	
 	this.set = function(key, value)
 	{
-		this.data[key] = value;
+		data[key] = value;
 	};
 	
 	this.del = function(key)
 	{
-		delete this.data[key];
+		delete data[key];
 	};
 	
 	this.incr = function(key)
@@ -79,7 +79,7 @@
 	{
 		if(!this.exists(key)) return -1;
 		
-		for(i in this.data[key]) if(this.data[key][i] == value) return i;
+		for(i in data[key]) if(data[key][i] == value) return i;
 		
 		return -1;
 	};
@@ -88,14 +88,14 @@
 	{
 		if(!this.exists(key)) return false;
 		
-		return this.data[key].join("/x0f").indexOf(value) >= 0;
+		return data[key].join("/x0f").indexOf(value) >= 0;
 	};
 	
 	this.sadd = function(key, value)
 	{
-		if(!this.exists(key)) this.data[key] = [];
+		if(!this.exists(key)) data[key] = [];
 		
-		if(!this.sismember(key, value)) this.data[key].push(value);
+		if(!this.sismember(key, value)) data[key].push(value);
 		
 		return true;
 	};
@@ -105,7 +105,7 @@
 		if(!this.exists(key)) return false;
 		
 		var index = this.sindex(key, value);
-		if(index > -1) return this.data[key].splice(index, index+1); 
+		if(index > -1) return data[key].splice(index, index+1); 
 		
 		return false;
 	};
@@ -114,14 +114,14 @@
 	{
 		if(!this.exists(key)) return false;
 		
-		return this.data[key].pop();
+		return data[key].pop();
 	};
 	
 	this.scard = function(key)
 	{
 		if(!this.exists(key)) return 0;
 		
-		return this.data[key].length;
+		return data[key].length;
 	};
 	
 	this.smove = function(key1, key2, value)
@@ -159,21 +159,21 @@
 	 */
 	this.hexists = function(key, field)
 	{
-		return typeof this.data[key][field] != 'undefined';
+		return typeof data[key][field] != 'undefined';
 	};
 	
 	this.hget = function(key, field, d)
 	{
 		if(!this.hexists(key, field)) return d;
 		
-		return this.data[key][field];
+		return data[key][field];
 	};
 	
 	this.hset = function(key, field, value)
 	{
-		if(!this.exists(key)) this.data[key] = {}; 
+		if(!this.exists(key)) data[key] = {}; 
 		
-		this.data[key][field] = value;
+		data[key][field] = value;
 		return true;
 	};
 	
@@ -182,14 +182,14 @@
 		if(!this.exists(key)) return 0;
 		
 		var len = 0;
-		for(i in this.data[key]) len++;
+		for(i in data[key]) len++;
 		
 		return len;
 	};
 	
 	this.hdel = function(key, field)
 	{
-		return delete this.data[key][field];
+		return delete data[key][field];
 	};
 	
 	this.hgetall = function(key)
@@ -219,42 +219,42 @@
 	{
 		if(!this.exists(key)) return 0;
 		
-		return this.data[key].length;
+		return data[key].length;
 	};
 	
 	this.lset = function(key, index, value)
 	{
-		if(!this.exists(key)) this.data[key] = []; 
+		if(!this.exists(key)) data[key] = []; 
 		
-		return this.data[key][index] = value;
+		return data[key][index] = value;
 	};
 	
 	this.lpush = function(key, value)
 	{
-		if(!this.exists(key)) this.data[key] = []; 
+		if(!this.exists(key)) data[key] = []; 
 		
-		return this.data[key].unshift(value);
+		return data[key].unshift(value);
 	};
 	
 	this.rpush = function(key, value)
 	{
-		if(!this.exists(key)) this.data[key] = [];
+		if(!this.exists(key)) data[key] = [];
 		
-		return this.data[key].push(value);
+		return data[key].push(value);
 	};
 	
 	this.lpop = function(key)
 	{
 		if(!this.exists(key)) return false;
 		
-		return this.data[key].shift();
+		return data[key].shift();
 	};
 	
 	this.rpop = function(key)
 	{
 		if(!this.exists(key)) return false;
 		
-		return this.data[key].pop();
+		return data[key].pop();
 	};
 	
 	this.lrange = function(key, min, max)
