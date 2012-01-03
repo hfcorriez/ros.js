@@ -11,6 +11,7 @@
  */
 (function(jQuery) {
 	var data = {};
+	var meta = {};
 	
 	/*
 	 * Base
@@ -293,16 +294,16 @@
 		return data[key].pop();
 	};
 	
-	this.lrange = function(key, min, max)
+	this.lrange = function(key, start, end)
 	{
 		
 	};
 	
-	this.ltrim = function(key, min, max)
+	this.ltrim = function(key, start, end)
 	{
 		if(!this.exists(key)) return false;
 		
-		data[key] = data[key].slice(min, max);
+		data[key] = data[key].slice(start, end);
 		return true;
 	};
 	
@@ -324,44 +325,112 @@
 	/**
 	 * Sorted Sets
 	 */
-	this.zadd = function(key, value, score)
+	this.zexists = function(key, value)
 	{
-		
+		return typeof data[key][value] != 'undefined';
 	};
 	
-	this.zrem = function(key, vlaue)
+	this.zadd = function(key, value, score)
 	{
+		if(!this.exists(key)) data[key] = {};
 		
+		data[key][value] = score;
+		return true;
+	};
+	
+	this.zrem = function(key, value)
+	{
+		if(!this.zexists(key, value)) return false;
+		
+		return delete data[key][value];
 	};
 	
 	this.zcard = function(key)
 	{
+		if(!this.exists(key)) return 0;
 		
-	};
-	
-	this.zincr = function(key, value)
-	{
-		
+		length = 0;
+		for(k in data[key])
+		{
+			length++;
+		}
+		return length;
 	};
 	
 	this.zincrby = function(key, value, score)
 	{
+		if(!this.zexists(key, value)) data[key][value] = 0;
 		
+		data[key][value] += score;
 	};
 	
-	this.zrange = function(key, min, max)
+	this.zincr = function(key, value)
 	{
+		this.zincrby(key, value, 1);
+	};
+	
+	this.zdecrby = function(key, value, score)
+	{
+		if(!this.zexists(key, value)) data[key][value] = 0;
 		
+		data[key][value] -= score;
+	};
+	
+	this.zdecr = function(key, value)
+	{
+		this.zdecrby(key, value, 1);
+	};
+	
+	this.zrange = function(key, start, end)
+	{
+		if(!this.exists(key)) return false;
+		
+		return data[key].slice(start, end);
 	};
 	
 	this.zscore = function(key, value)
 	{
+		if(!this.zexists(key, value)) return false;
 		
+		return data[key][value];
 	};
 	
 	this.zrank = function(key, value)
 	{
+		if(!this.zsort(key)) return false;
 		
+		var i = 1;
+		for(k in data[key])
+		{
+			if(k == value) return i;
+			i++;
+		}
+		return false;
+	};
+	
+	/**
+	 * @todo 优化排序实现
+	 * @param key
+	 */
+	this.zsort = function(key)
+	{
+		if(!this.exists(key)) return false;
+		var sortable = [];
+		var newdata = {};
+		for (var k in data[key])
+		{
+			sortable.push([k, data[key][k]]);
+		}
+		
+		sortable.sort(function(a, b) {return b[1] - a[1];});
+		
+		for(var i in sortable)
+		{
+			newdata[sortable[i][0]] = sortable[i][1];
+		}
+		data[key] = newdata;
+		newdata = null;
+		return data[key];
 	};
 	
 	jQuery.storage = this;

@@ -33,6 +33,15 @@ $(document).ready(function(){
     $.storage.append('append', 'hello');
     $.storage.append('append', ' world');
     $.storage.hset('result', 'append', $.storage.get('append'));
+
+    $.storage.zadd('myrank', 'a2', 2);
+    $.storage.zadd('myrank', 'a1', 1);
+    $.storage.zadd('myrank', 'a4', 4.5);
+    $.storage.zadd('myrank', 'a3', 3);
+    $.storage.zsort('myrank');
+    $.storage.zrem('myrank', 'a3');
+    console.log($.storage.zcard('myrank'), $.storage.zrank('myrank', 'a4'));
+    $.storage.hset('result', 'myrank', $.storage.get('myrank'));
     
 	console.log($.storage.get('result'));
 });
