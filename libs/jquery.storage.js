@@ -16,9 +16,11 @@
 	/*
 	 * Base
 	 */
+	
+	// 添加 data.hasOwnProperty，排除从 prototype 中继承过来的属性 
 	this.exists = function(key)
 	{
-		return key in data;
+		return key in data && data.hasOwnProperty(key);
 	};
 	
 	this.get = function(key, d)
