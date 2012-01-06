@@ -17,10 +17,10 @@
 	 * Base
 	 */
 	
-	// 添加 data.hasOwnProperty，排除从 prototype 中继承过来的属性 
+	// 直取就可以了，性能对比，写了个用例 http://jsperf.com/obj-detail/3 
 	this.exists = function(key)
 	{
-		return key in data && data.hasOwnProperty(key);
+		return data.hasOwnProperty(key);
 	};
 	
 	this.get = function(key, d)
