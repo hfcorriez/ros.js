@@ -11,6 +11,8 @@
  */
 (function(jQuery) {
 	var data = {};
+	
+	// @todo 会用做记录各种meta信息
 	var meta = {};
 	
 	/*
