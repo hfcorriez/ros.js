@@ -8,7 +8,9 @@
  *
  * Copyright © Corrie Zhao [hfcorriez@gmail.com]
  *
- */ (function (jQuery) {
+ */ 
+ 
+(function (jQuery) {
     var data = {};
 
     // @todo 会用做记录各种meta信息
@@ -159,10 +161,10 @@
      * @returns {integer} 
      */
     this.sindex = function (key, value) {
-        if (!this.exists(key)) return -1;
-
-        for (i in data[key]) if (data[key][i] == value) return i;
-
+        // 不需要判断 exists, 循环如果有结果会直接结束，在底部 return -1 就可以了
+        // TODO: Array 也可以用 for…in 循环，这里写的应该是应用在 Object 上
+        //  应防止向上查询，但像 .sismember 和 .add 等似乎都是处理数组的!! 这个比较乱
+        for (i in data[key]) if ( data[key].hasOwnProperty(i) && data[key][i] == value ) return i;
         return -1;
     };
 
@@ -174,9 +176,8 @@
      * @returns {Boolean}
      */
     this.sismember = function (key, value) {
-        if (!this.exists(key)) return false;
-
-        return data[key].join("/x0f").indexOf(value) >= 0;
+        // TODO: join 是 Array 对象的 方法，data[key] 明确是一个 Array?
+        return this.exists(key) ? data[key].join("/x0f").indexOf(value) >= 0 : 0;
     };
 
     /**
@@ -187,10 +188,8 @@
      * @returns {Boolean}
      */
     this.sadd = function (key, value) {
-        if (!this.exists(key)) data[key] = [];
-
-        if (!this.sismember(key, value)) data[key].push(value);
-
+        !this.exists(key) && data[key] = [];
+        !this.sismember(key, value) && data[key].push(value);
         return true;
     };
 
@@ -203,11 +202,10 @@
      */
     this.srem = function (key, value) {
         if (!this.exists(key)) return false;
-
+        
         var index = this.sindex(key, value);
-        if (index > -1) return data[key].splice(index, index + 1);
-
-        return false;
+        // TODO: splice 是 Array 对象的 方法，data[key] 明确是一个 Array?        
+        return index > -1 ? data[key].splice(index, index + 1) : 0;
     };
 
     /**
@@ -218,9 +216,7 @@
      * @returns
      */
     this.spop = function (key, value) {
-        if (!this.exists(key)) return false;
-
-        return data[key].pop();
+        return this.exists(key) ? data[key].pop() : 0;
     };
 
     /**
@@ -230,9 +226,7 @@
      * @returns
      */
     this.scard = function (key) {
-        if (!this.exists(key)) return 0;
-
-        return data[key].length;
+        return this.exists(key) ? data[key].length : 0;
     };
 
     /**
@@ -250,7 +244,7 @@
     };
 
     /**
-     * 返回结合中的所有元素
+     * 返回集合中的所有元素
      * 
      * @param key
      * @returns
@@ -266,7 +260,7 @@
      * @param key2
      */
     this.sinter = function (key1, key2) {
-
+        // TODO Object 和 Array 的做法是比较不同的
     };
 
     /**
@@ -295,7 +289,10 @@
      * @param key
      */
     this.srandmember = function (key) {
-
+        var set = data[key],
+            length = set.length - 1,
+            random = (Math.random() * length).toFixed(0);
+        return set[random];
     };
 
     /*
