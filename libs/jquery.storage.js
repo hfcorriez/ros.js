@@ -188,7 +188,7 @@
      * @returns {Boolean}
      */
     this.sadd = function (key, value) {
-        !this.exists(key) && data[key] = [];
+        !this.exists(key) && (data[key] = []);
         !this.sismember(key, value) && data[key].push(value);
         return true;
     };
