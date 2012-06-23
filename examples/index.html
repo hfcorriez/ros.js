@@ -2,48 +2,49 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Jquery Storage Exapmle</title>
+<title>JS RCache Exapmle</title>
 <script type="text/javascript" src="../libs/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../src/jquery.storage.js"></script>
+    <script type="text/javascript" src="../src/rcache.js"></script>
+<script type="text/javascript" src="../src/jquery.rcache.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
-    $.storage.set('key', 'value');
-    $.storage.get('key', 'default');
-    $.storage.hset('result', 'key', $.storage.get('key'));
+    $.rcache.set('key', 'value');
+    $.rcache.get('key', 'default');
+    $.rcache.hset('result', 'key', $.rcache.get('key'));
     
-	$.storage.rpush('list', 1);
-	$.storage.lpush('list', 'message 2');
-	$.storage.rpush('list', {data: 'message 3', id: 3});
-	$.storage.hset('result', 'list', $.storage.get('list'));
+	$.rcache.rpush('list', 1);
+	$.rcache.lpush('list', 'message 2');
+	$.rcache.rpush('list', {data: 'message 3', id: 3});
+	$.rcache.hset('result', 'list', $.rcache.get('list'));
 	
-	$.storage.hset('hash', 'name', 'hfcorriez');
-	$.storage.hset('hash', 'sexy', 'male');
-	$.storage.hset('result', 'hash', $.storage.get('hash'));
+	$.rcache.hset('hash', 'name', 'hfcorriez');
+	$.rcache.hset('hash', 'sexy', 'male');
+	$.rcache.hset('result', 'hash', $.rcache.get('hash'));
 	
-    $.storage.sadd('set', 'hfcorriez');
-    $.storage.sadd('set', 'fdream');
-    $.storage.sadd('set', 'hfcorriez');
-    $.storage.hset('result', 'set', $.storage.get('set'));
+    $.rcache.sadd('set', 'hfcorriez');
+    $.rcache.sadd('set', 'fdream');
+    $.rcache.sadd('set', 'hfcorriez');
+    $.rcache.hset('result', 'set', $.rcache.get('set'));
     
-    $.storage.incr('incr');
-    $.storage.incrby('incr', 2);
-    $.storage.hset('result', 'incr', $.storage.get('incr'));
+    $.rcache.incr('incr');
+    $.rcache.incrby('incr', 2);
+    $.rcache.hset('result', 'incr', $.rcache.get('incr'));
     
-    $.storage.append('append', 'hello');
-    $.storage.append('append', ' world');
-    $.storage.hset('result', 'append', $.storage.get('append'));
+    $.rcache.append('append', 'hello');
+    $.rcache.append('append', ' world');
+    $.rcache.hset('result', 'append', $.rcache.get('append'));
 
-    $.storage.zadd('myrank', 'a2', 2);
-    $.storage.zadd('myrank', 'a1', 1);
-    $.storage.zadd('myrank', 'a4', 4.5);
-    $.storage.zadd('myrank', 'a3', 3);
-    $.storage.zsort('myrank');
-    $.storage.zrem('myrank', 'a3');
-    console.log($.storage.zcard('myrank'), $.storage.zrank('myrank', 'a4'));
-    $.storage.hset('result', 'myrank', $.storage.get('myrank'));
+    $.rcache.zadd('myrank', 'a2', 2);
+    $.rcache.zadd('myrank', 'a1', 1);
+    $.rcache.zadd('myrank', 'a4', 4.5);
+    $.rcache.zadd('myrank', 'a3', 3);
+    $.rcache.zsort('myrank');
+    $.rcache.zrem('myrank', 'a3');
+    console.log($.rcache.zcard('myrank'), $.rcache.zrank('myrank', 'a4'));
+    $.rcache.hset('result', 'myrank', $.rcache.get('myrank'));
     
-	console.log($.storage.get('result'));
+	console.log($.rcache.get('result'));
 });
 </script>
 </head>

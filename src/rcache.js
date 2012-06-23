@@ -1,91 +1,127 @@
 /*
- * Storage (redis like)
- * version: 0.1
- * @requires jQuery
+ * rcache.js
+ * version: 0.2
  *
  * Licensed under the MIT:
  *   http://www.opensource.org/licenses/mit-license.php
- *
- * Copyright © Corrie Zhao [hfcorriez@gmail.com]
- *
- */ 
- 
-(function (jQuery) {
+ */
+
+;(function() {
+    /**
+     * Extend each method of Array
+     * @param fn
+     * @return {Array}
+     */
+    Array.prototype.each = function(fn){
+        fn = fn || Function.K;
+        var a = [];
+        var args = Array.prototype.slice.call(arguments, 1);
+        for(var i = 0; i < this.length; i++){
+            var res = fn.apply(this,[this[i],i].concat(args));
+            if(res != null) a.push(res);
+        }
+        return a;
+    };
+
+    /**
+     * Extend unique method of Array
+     * @return {Array}
+     */
+    Array.prototype.uniquelize = function(){
+        var ra = new Array();
+        for(var i = 0; i < this.length; i ++){
+            if(!ra.contains(this[i])){
+                ra.push(this[i]);
+            }
+        }
+        return ra;
+    };
+
+    /**
+     * Extent contains method of Array
+     * @param item
+     * @return {Boolean}
+     */
+    Array.prototype.contains = function(item){
+        return RegExp(item).test(this);
+    };
+
+    // Storage of data
     var data = {};
 
-    // @todo 会用做记录各种meta信息
+    // Meta of data
     var meta = {};
 
     /*
      * Base
      */
 
-    // 直取就可以了，性能对比，写了个用例 http://jsperf.com/obj-detail/3 
+    /**
+     * Exist a key?
+     * @param key
+     * @return {Boolean}
+     */
     this.exists = function (key) {
         return data.hasOwnProperty(key);
     };
 
     /**
-     * 获取，如果不存在则返回默认值
-     * 
-     * @param key	
-     * @param d
+     * 获取键值
+     *
+     * @param key
      * @todo 考虑将默认值去掉，完全按照redis api设计
      */
-    this.get = function (key, d) {
-        return this.exists(key) ? data[key] : d;
-    },
+    this.get = function (key) {
+        return this.exists(key) ? data[key] : null;
+    };
 
     /**
-     * 存储
-     * 
+     * 存储键值对
+     *
      * @param key
      * @param value
      */
     this.set = function (key, value) {
         data[key] = value;
+        this._save(key, value);
+        return true;
     };
 
     /**
      * 删除
-     * 
+     *
      * @param key
      */
     this.del = function (key) {
-        delete data[key];
+        return delete data[key];
     };
 
-
-/* ***************
- * TODO: 如果 data[key] 是 {String} 的话，incr 和 decr 应该如何做
- * 如：$.incrby('a', 3) === 'aaa'
- */    
-    
     /**
      * 将一个key递增1
-     * 
+     *
      * @param key
      */
     this.incr = function (key) {
-        this.incrby(key, 1);
+        return this.incrby(key, 1);
     };
 
     /**
      * 将一个key按照count递增
-     * 
+     *
      * @param key
      * @param count
      * @returns {Boolean}
      */
     this.incrby = function (key, count) {
-        if (this.exists(key)) data[key] += parseInt(count);
-        else data[key] = count;
-        return true;
+        if (!this._isNumber(count)) return false;
+        if (!this.exists(key)) return (this.set(key, count), count);
+        if (this._meta(key) == 'number') return (data[key] = parseInt(data[key]) + parseInt(count), data[key]);
+        return false;
     };
-    
+
     /**
      * 将一个key递减1
-     * 
+     *
      * @param key
      * @returns {Boolean}
      */
@@ -95,20 +131,21 @@
 
     /**
      * 将一个key按照count递减
-     * 
+     *
      * @param key
      * @param count
      * @returns {Boolean}
      */
     this.decrby = function (key, count) {
-        if (this.exists(key)) data[key] -= parseInt(count);
-        else data[key] = -count;
-        return true;
+        if (!this._isNumber(count)) return false;
+        if (!this.exists(key)) return (this.set(key, -count), -count);
+        if (this._meta(key) == 'number') return (data[key] = parseInt(data[key]) - parseInt(count), data[key]);
+        return false;
     };
 
     /**
      * 存储一个key，并返回存储前的key值
-     * 
+     *
      * @param key
      * @param value
      * @returns {*||Boolean}
@@ -121,32 +158,29 @@
 
     /**
      * 当key不存在的时候存储
-     * 
+     *
      * @param key
      * @param value
      * @returns {Boolean}
      */
     this.setnx = function (key, value) {
-        return this.exists(key) ? 0 : (data[key] = value, 1);
+        return this.exists(key) ? false : (this.set(key, value), true);
     };
 
-
-/* ***************
- * TODO: 如果 data[key] 非 {Number} 和 {String} 的话，应该如何做 
- * 如：[1,2,3] + '' + 'hfcorriez' 的值是 '1,2,3hfcorriez'
- */ 
- 
     /**
      * 将一个key值append字符串
-     * 
+     *
      * @param key
      * @param value
      * @returns {Boolean}
      */
     this.append = function (key, value) {
-        if (!this.exists(key)) data[key] = "" + value;
-        else data[key] += "" + value;
-        return true;
+        value = this._toString(value);
+        if (!value) return false;
+
+        if (!this.exists(key)) this.set(key, value);
+        else data[key] += value;
+        return data[key].length;
     };
 
     /*
@@ -155,89 +189,92 @@
 
     /**
      * 返回一个元素在集合中的索引
-     * 
+     *
      * @param key
      * @param value
-     * @returns {integer} 
+     * @returns {Number}
      */
-    this.sindex = function (key, value) {
-        // 不需要判断 exists, 循环如果有结果会直接结束，在底部 return -1 就可以了
-        // TODO: Array 也可以用 for…in 循环，这里写的应该是应用在 Object 上
-        //  应防止向上查询，但像 .sismember 和 .add 等似乎都是处理数组的!! 这个比较乱
-        for (i in data[key]) if ( data[key].hasOwnProperty(i) && data[key][i] == value ) return i;
+    this._sindex = function (key, value) {
+        for (var i in data[key]) if (data[key][i] == value ) return i;
         return -1;
     };
 
     /**
-     * 检查一个元素是否属于一个集合 
-     * 
+     * 检查一个元素是否属于一个集合
+     *
      * @param key
      * @param value
      * @returns {Boolean}
      */
     this.sismember = function (key, value) {
-        // TODO: join 是 Array 对象的 方法，data[key] 明确是一个 Array?
-        return this.exists(key) ? data[key].join("/x0f").indexOf(value) >= 0 : 0;
+        if (!this._isSet(key)) return false;
+
+        return !!(this._sindex(key, value) > -1);
     };
 
     /**
      * 将一个元素添加到一个集合
-     * 
+     *
      * @param key
      * @param value
      * @returns {Boolean}
      */
     this.sadd = function (key, value) {
-        !this.exists(key) && (data[key] = []);
+        !this.exists(key) && this.set(key, []);
         !this.sismember(key, value) && data[key].push(value);
         return true;
     };
 
     /**
      * 将一个元素从集合中删除
-     * 
+     *
      * @param key
      * @param value
-     * @returns
+     * @returns {Boolean}
      */
     this.srem = function (key, value) {
-        if (!this.exists(key)) return false;
-        
-        var index = this.sindex(key, value);
-        // TODO: splice 是 Array 对象的 方法，data[key] 明确是一个 Array?        
+        if (!this._isSet(key)) return false;
+
+        var index = this._sindex(key, value);
         return index > -1 ? data[key].splice(index, index + 1) : 0;
     };
 
     /**
      * 将集合中最后一个元素抛出
-     * 
+     *
      * @param key
      * @param value
-     * @returns
+     * @returns {*}
      */
     this.spop = function (key, value) {
-        return this.exists(key) ? data[key].pop() : 0;
+        if (!this._isSet(key)) return false;
+
+        return data[key].pop();
     };
 
     /**
      * 返回集合的长度
-     * 
+     *
      * @param key
-     * @returns
+     * @returns {Number}
      */
     this.scard = function (key) {
-        return this.exists(key) ? data[key].length : 0;
+        if (!this._isSet(key)) return 0;
+
+        return data[key].length;
     };
 
     /**
      * 将一个元素从key1集合移动到key2集合
-     * 
+     *
      * @param key1
      * @param key2
      * @param value
      * @returns {Boolean}
      */
     this.smove = function (key1, key2, value) {
+        if (!this._isSet(key)) return false;
+
         this.srem(key1, value);
         this.sadd(key2, value);
         return true;
@@ -245,50 +282,60 @@
 
     /**
      * 返回集合中的所有元素
-     * 
+     *
      * @param key
-     * @returns
+     * @returns {Object}
      */
     this.smembers = function (key) {
-        return this.get(key);
+        if (!this._isSet(key)) return false;
+
+        return data[key];
     };
 
     /**
      * 获取两个集合的交集
-     * 
+     *
      * @param key1
      * @param key2
      */
     this.sinter = function (key1, key2) {
-        // TODO Object 和 Array 的做法是比较不同的
+        if (!this._isSet(key1) || !this._isSet(key2)) return false;
+
+        return data[key1].each(function(o){return data[key2].contains(o) ? o : null});
     };
 
     /**
      * 返回两个集合的并集
-     * 
+     *
      * @param key1
      * @param key2
      */
     this.sunion = function (key1, key2) {
+        if (!this._isSet(key1) || !this._isSet(key2)) return false;
 
+        return data[key1].concat(data[key2]).uniquelize();
     };
 
     /**
      * 返回两个集合的差集
-     * 
+     *
      * @param key1
      * @param key2
      */
     this.sdiff = function (key1, key2) {
+        if (!this._isSet(key1) || !this._isSet(key2)) return false;
 
+        return data[key1].each(function(o){return data[key2].contains(o) ? null : o});
     };
 
     /**
      * 随机返回集合中的一个元素
-     * 
+     *
      * @param key
      */
     this.srandmember = function (key) {
+        if (!this._isSet(key)) return false;
+
         var set = data[key],
             length = set.length - 1,
             random = (Math.random() * length).toFixed(0);
@@ -301,7 +348,7 @@
 
     /**
      * 检查field是否在hash中存在
-     * 
+     *
      * @param key
      * @param field
      */
@@ -325,7 +372,7 @@
 
     /**
      * 在hash中设置字段
-     * 
+     *
      * @param key
      * @param field
      * @param value
@@ -340,7 +387,7 @@
 
     /**
      * 返回hash表的长度
-     * 
+     *
      * @param key
      * @returns {Number}
      */
@@ -355,7 +402,7 @@
 
     /**
      * 删除hash中的一个字段
-     * 
+     *
      * @param key
      * @param field
      * @returns
@@ -366,7 +413,7 @@
 
     /**
      * 获取hash表
-     * 
+     *
      * @param key
      * @returns
      */
@@ -376,7 +423,7 @@
 
     /**
      * 将hash的一个字段按照给定数值递增
-     * 
+     *
      * @param key
      * @param field
      * @param count
@@ -393,7 +440,7 @@
 
     /**
      * 将hash中的一个字段按照给定数值递减
-     * 
+     *
      * @param key
      * @param field
      * @param count
@@ -410,7 +457,7 @@
 
     /**
      * 返回hash表的所有字段名
-     * 
+     *
      * @param key
      * @returns
      */
@@ -431,7 +478,7 @@
      */
     /**
      * 返回链表的长度
-     * 
+     *
      * @param key
      */
     this.llen = function (key) {
@@ -442,7 +489,7 @@
 
     /**
      * 在给定索引位置插入元素
-     * 
+     *
      * @param key
      * @param index
      * @param value
@@ -456,7 +503,7 @@
 
     /**
      * 在链表最前面插入元素
-     * 
+     *
      * @param key
      * @param value
      * @returns
@@ -469,7 +516,7 @@
 
     /**
      * 在链表最后面插入元素
-     * 
+     *
      * @param key
      * @param value
      * @returns
@@ -482,7 +529,7 @@
 
     /**
      * 将链表最前一个元素取出
-     * 
+     *
      * @param key
      * @returns
      */
@@ -494,7 +541,7 @@
 
     /**
      * 将链表最后一个元素抛出
-     * 
+     *
      * @param key
      * @returns
      */
@@ -506,7 +553,7 @@
 
     /**
      * 返回链表中给定范围的一段
-     * 
+     *
      * @param key
      * @param start
      * @param end
@@ -517,7 +564,7 @@
 
     /**
      * 将链表按照给定长度修剪
-     * 
+     *
      * @param key
      * @param start
      * @param end
@@ -532,7 +579,7 @@
 
     /**
      * 返回链表某个位置的元素
-     * 
+     *
      * @param key
      * @param index
      * @returns
@@ -559,9 +606,9 @@
 
     /**
      * 检查元素是否在排序集合
-     * 
+     *
      * @param key
-     * @param value 
+     * @param value
      */
     this.zexists = function (key, value) {
         return typeof data[key][value] != 'undefined';
@@ -569,7 +616,7 @@
 
     /**
      * 添加元素和分数到排序集合
-     * 
+     *
      * @param key
      * @param value
      * @param score
@@ -584,7 +631,7 @@
 
     /**
      * 从排序集合中删除元素
-     * 
+     *
      * @param key
      * @param value
      * @returns
@@ -597,7 +644,7 @@
 
     /**
      * 获取排序集合的长度
-     * 
+     *
      * @param key
      * @returns
      */
@@ -613,7 +660,7 @@
 
     /**
      * 在排序集合中将一个元素的分数递增给定分数
-     * 
+     *
      * @param key
      * @param value
      * @param score
@@ -626,7 +673,7 @@
 
     /**
      * 在排序集合中将一个元素的分数+1
-     * 
+     *
      * @param key
      * @param value
      */
@@ -636,7 +683,7 @@
 
     /**
      * 在排序集合中将一个元素的分数递减给定分数
-     * 
+     *
      * @param key
      * @param value
      * @param score
@@ -658,7 +705,7 @@
 
     /**
      * 返回排序集合中给定范围的元素
-     * 
+     *
      * @param key
      * @param start
      * @param end
@@ -673,7 +720,7 @@
 
     /**
      * 返回排序集合中给定元素的分数
-     * 
+     *
      * @param key
      * @param value
      * @returns
@@ -686,7 +733,7 @@
 
     /**
      * 返回排序集合给定元素的排名
-     * 
+     *
      * @param key
      * @param value
      * @returns
@@ -704,7 +751,7 @@
 
     /**
      * 排序一个集合
-     * 
+     *
      * @todo 优化排序实现
      * @param key
      * @addon
@@ -729,6 +776,80 @@
         return data[key];
     };
 
-    jQuery.storage = this;
-    return jQuery;
-})(jQuery);
+    /**
+     * 保存数据的Meta信息
+     *
+     * @param key
+     * @param value
+     * @private
+     */
+    this._save = function(key, value) {
+        if (typeof value == 'string' && this._isNumber(value)) {
+            meta[key] = 'number';
+        } else if (typeof value == 'object' && Object.prototype.toString.apply(value) === '[object Array]') {
+            meta[key] = 'array';
+        }
+        return meta[key] == typeof value;
+    };
+
+    /**
+     * 获取数据的Meta信息
+     *
+     * @param key
+     * @return {*}
+     * @private
+     */
+    this._meta = function(key) {
+        return meta.hasOwnProperty(key) ? meta[key] : false;
+    };
+
+    /**
+     * 是否数字
+     *
+     * @param value
+     * @return {Boolean}
+     * @private
+     */
+    this._isNumber = function(value) {
+        return !isNaN(Number(value));
+    };
+
+    /**
+     * To string
+     *
+     * @param value
+     * @return {*}
+     * @private
+     */
+    this._toString = function(value) {
+        if (typeof value == 'number' || typeof value == 'string') return value.toString();
+        return false;
+    };
+
+    /**
+     * To number
+     *
+     * @param value
+     * @return {*}
+     * @private
+     */
+    this._toNumber = function(value) {
+        if (typeof value == 'number') return value;
+        if (!isNaN(Number(value))) return Number(value);
+        return false;
+    };
+
+    /**
+     * Is set?
+     *
+     * @param key
+     * @return {Boolean}
+     * @private
+     */
+    this._isSet = function(key) {
+        return this._meta(key) == 'array';
+    };
+
+    window.rcache = this;
+    return window;
+}) ();
