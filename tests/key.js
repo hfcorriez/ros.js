@@ -1,5 +1,5 @@
 describe('Key', function () {
-    describe('#storage.set()', function () {
+    describe('set()', function () {
         it('Set a value', function () {
             var ok = rcache.set('key.1', 'a value.');
             assert('a value.' == rcache.get('key.1'));
@@ -14,7 +14,7 @@ describe('Key', function () {
         });
     });
 
-    describe('#storage.setnx()', function () {
+    describe('setnx()', function () {
         it('Setnx if exist.', function () {
             // 存在测试
             rcache.set('key.3', 'k3');
@@ -31,14 +31,14 @@ describe('Key', function () {
         });
     });
 
-    describe('#storage.exist()', function () {
+    describe('exist()', function () {
         it('Check if exist a key.', function () {
             rcache.set('key.5', 'k5');
             assert(true == rcache.exists('key.5'));
         });
     });
 
-    describe('#storage.del()', function () {
+    describe('del()', function () {
         it('Del a key.', function () {
             rcache.set('key.6', 'k6');
             assert(true == rcache.exists('key.6'));
@@ -47,7 +47,7 @@ describe('Key', function () {
         });
     });
 
-    describe('#storage.incr()', function () {
+    describe('incr()', function () {
         it('Incr a non-exist key.', function () {
             // 不存在情况
             var s1 = rcache.incr('key.7');
@@ -71,7 +71,7 @@ describe('Key', function () {
         });
     });
 
-    describe('#storage.decr()', function () {
+    describe('decr()', function () {
         it('Decr a non-exist key.', function () {
             // 不存在情况下
             var s1 = rcache.decr('key.10');
@@ -95,7 +95,7 @@ describe('Key', function () {
         });
     });
 
-    describe('#storage.getset()', function () {
+    describe('getset()', function () {
         it('Get and set a non-exist key.', function () {
             // 不存在的情况下
             var old = rcache.getset('key.13', 'k13');
@@ -111,7 +111,7 @@ describe('Key', function () {
         });
     });
 
-    describe('#storage.append()', function () {
+    describe('append()', function () {
         it('Append normal.', function () {
             // 字符串拼接
             rcache.set('key.14', 'k14');

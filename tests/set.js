@@ -7,19 +7,19 @@ describe('Set', function () {
         rcache.sadd('set.2', 'd');
     });
 
-    describe('#storage.sinter()', function () {
+    describe('sinter()', function () {
         it('Get intersect of two array', function () {
             assert(["c"].toString() == rcache.sinter('set.1', 'set.2').toString());
         });
     });
 
-    describe('#storage.sunion()', function () {
+    describe('sunion()', function () {
         it('Get union of two array', function () {
             assert(["a", 'b', 'c', 'd'].toString() == rcache.sunion('set.1', 'set.2').toString());
         });
     });
 
-    describe('#storage.sdiff()', function () {
+    describe('sdiff()', function () {
         it('Get diff of two array', function () {
             assert(['a', 'b'].toString() == rcache.sdiff('set.1', 'set.2').toString());
         });
