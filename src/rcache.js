@@ -69,7 +69,6 @@
      * 获取键值
      *
      * @param key
-     * @todo 考虑将默认值去掉，完全按照redis api设计
      */
     this.get = function (key) {
         return this.exists(key) ? data[key] : null;
@@ -193,6 +192,7 @@
      * @param key
      * @param value
      * @returns {Number}
+     * @private
      */
     this._sindex = function (key, value) {
         for (var i in data[key]) if (data[key][i] == value) return i;
@@ -365,7 +365,6 @@
      * @param key
      * @param field
      * @returns {*}
-     * @todo 可能会将默认值去掉保持和redis api一致
      */
     this.hget = function (key, field) {
         if (!this.hexists(key, field)) return null;
@@ -758,7 +757,6 @@
      *
      * @todo 优化排序实现
      * @param key
-     * @addon
      */
     this.zsort = function (key) {
         if (!this.exists(key)) return false;

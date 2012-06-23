@@ -1,52 +1,52 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>JS RCache Exapmle</title>
-<script type="text/javascript" src="../libs/jquery-1.7.1.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>JS RCache Exapmle</title>
+    <script type="text/javascript" src="../libs/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../src/rcache.js"></script>
-<script type="text/javascript" src="../src/jquery.rcache.js"></script>
+    <script type="text/javascript" src="../src/jquery.rcache.js"></script>
 
-<script type="text/javascript">
-$(document).ready(function(){
-    $.rcache.set('key', 'value');
-    $.rcache.get('key', 'default');
-    $.rcache.hset('result', 'key', $.rcache.get('key'));
-    
-	$.rcache.rpush('list', 1);
-	$.rcache.lpush('list', 'message 2');
-	$.rcache.rpush('list', {data: 'message 3', id: 3});
-	$.rcache.hset('result', 'list', $.rcache.get('list'));
-	
-	$.rcache.hset('hash', 'name', 'hfcorriez');
-	$.rcache.hset('hash', 'sexy', 'male');
-	$.rcache.hset('result', 'hash', $.rcache.get('hash'));
-	
-    $.rcache.sadd('set', 'hfcorriez');
-    $.rcache.sadd('set', 'fdream');
-    $.rcache.sadd('set', 'hfcorriez');
-    $.rcache.hset('result', 'set', $.rcache.get('set'));
-    
-    $.rcache.incr('incr');
-    $.rcache.incrby('incr', 2);
-    $.rcache.hset('result', 'incr', $.rcache.get('incr'));
-    
-    $.rcache.append('append', 'hello');
-    $.rcache.append('append', ' world');
-    $.rcache.hset('result', 'append', $.rcache.get('append'));
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.rcache.set('key', 'value');
+            $.rcache.get('key', 'default');
+            $.rcache.hset('result', 'key', $.rcache.get('key'));
 
-    $.rcache.zadd('myrank', 'a2', 2);
-    $.rcache.zadd('myrank', 'a1', 1);
-    $.rcache.zadd('myrank', 'a4', 4.5);
-    $.rcache.zadd('myrank', 'a3', 3);
-    $.rcache.zsort('myrank');
-    $.rcache.zrem('myrank', 'a3');
-    console.log($.rcache.zcard('myrank'), $.rcache.zrank('myrank', 'a4'));
-    $.rcache.hset('result', 'myrank', $.rcache.get('myrank'));
-    
-	console.log($.rcache.get('result'));
-});
-</script>
+            $.rcache.rpush('list', 1);
+            $.rcache.lpush('list', 'message 2');
+            $.rcache.rpush('list', {data:'message 3', id:3});
+            $.rcache.hset('result', 'list', $.rcache.get('list'));
+
+            $.rcache.hset('hash', 'name', 'hfcorriez');
+            $.rcache.hset('hash', 'sexy', 'male');
+            $.rcache.hset('result', 'hash', $.rcache.get('hash'));
+
+            $.rcache.sadd('set', 'hfcorriez');
+            $.rcache.sadd('set', 'fdream');
+            $.rcache.sadd('set', 'hfcorriez');
+            $.rcache.hset('result', 'set', $.rcache.get('set'));
+
+            $.rcache.incr('incr');
+            $.rcache.incrby('incr', 2);
+            $.rcache.hset('result', 'incr', $.rcache.get('incr'));
+
+            $.rcache.append('append', 'hello');
+            $.rcache.append('append', ' world');
+            $.rcache.hset('result', 'append', $.rcache.get('append'));
+
+            $.rcache.zadd('myrank', 'a2', 2);
+            $.rcache.zadd('myrank', 'a1', 1);
+            $.rcache.zadd('myrank', 'a4', 4.5);
+            $.rcache.zadd('myrank', 'a3', 3);
+            $.rcache.zsort('myrank');
+            $.rcache.zrem('myrank', 'a3');
+            console.log($.rcache.zcard('myrank'), $.rcache.zrank('myrank', 'a4'));
+            $.rcache.hset('result', 'myrank', $.rcache.get('myrank'));
+
+            console.log($.rcache.get('result'));
+        });
+    </script>
 </head>
 <body>
 
