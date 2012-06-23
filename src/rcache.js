@@ -360,12 +360,11 @@
      * 返回hash中的一个字段
      * @param key
      * @param field
-     * @param d
-     * @returns
+     * @returns {*}
      * @todo 可能会将默认值去掉保持和redis api一致
      */
-    this.hget = function (key, field, d) {
-        if (!this.hexists(key, field)) return d;
+    this.hget = function (key, field) {
+        if (!this.hexists(key, field)) return null;
 
         return data[key][field];
     };
@@ -405,7 +404,7 @@
      *
      * @param key
      * @param field
-     * @returns
+     * @returns {Boolean}
      */
     this.hdel = function (key, field) {
         return delete data[key][field];
@@ -415,7 +414,7 @@
      * 获取hash表
      *
      * @param key
-     * @returns
+     * @returns {*}
      */
     this.hgetall = function (key) {
         return this.get(key);
@@ -459,7 +458,7 @@
      * 返回hash表的所有字段名
      *
      * @param key
-     * @returns
+     * @returns {Array}
      */
     this.hkeys = function (key) {
         if (!this.exists(key)) return [];
@@ -493,7 +492,7 @@
      * @param key
      * @param index
      * @param value
-     * @returns
+     * @returns {Boolean}
      */
     this.lset = function (key, index, value) {
         if (!this.exists(key)) data[key] = [];
@@ -506,7 +505,7 @@
      *
      * @param key
      * @param value
-     * @returns
+     * @returns {Number}
      */
     this.lpush = function (key, value) {
         if (!this.exists(key)) data[key] = [];
@@ -519,7 +518,7 @@
      *
      * @param key
      * @param value
-     * @returns
+     * @returns {Number}
      */
     this.rpush = function (key, value) {
         if (!this.exists(key)) data[key] = [];
@@ -531,7 +530,7 @@
      * 将链表最前一个元素取出
      *
      * @param key
-     * @returns
+     * @returns {*}
      */
     this.lpop = function (key) {
         if (!this.exists(key)) return false;
@@ -543,7 +542,7 @@
      * 将链表最后一个元素抛出
      *
      * @param key
-     * @returns
+     * @returns {*}
      */
     this.rpop = function (key) {
         if (!this.exists(key)) return false;
@@ -559,7 +558,7 @@
      * @param end
      */
     this.lrange = function (key, start, end) {
-
+        // @todo implements.
     };
 
     /**
@@ -582,7 +581,7 @@
      *
      * @param key
      * @param index
-     * @returns
+     * @returns {*}
      */
     this.lindex = function (key, index) {
         if (!this.exists(key)) return false;
@@ -634,7 +633,7 @@
      *
      * @param key
      * @param value
-     * @returns
+     * @returns {Boolean}
      */
     this.zrem = function (key, value) {
         if (!this.zexists(key, value)) return false;
@@ -646,7 +645,7 @@
      * 获取排序集合的长度
      *
      * @param key
-     * @returns
+     * @returns {Number}
      */
     this.zcard = function (key) {
         if (!this.exists(key)) return 0;
@@ -664,11 +663,12 @@
      * @param key
      * @param value
      * @param score
+     * @returns {Boolean}
      */
     this.zincrby = function (key, value, score) {
         if (!this.zexists(key, value)) data[key][value] = 0;
 
-        data[key][value] += score;
+        return data[key][value] += score;
     };
 
     /**
@@ -709,7 +709,7 @@
      * @param key
      * @param start
      * @param end
-     * @returns
+     * @returns {Array}
      * @todo 需要先排序
      */
     this.zrange = function (key, start, end) {
@@ -723,7 +723,7 @@
      *
      * @param key
      * @param value
-     * @returns
+     * @returns {*}
      */
     this.zscore = function (key, value) {
         if (!this.zexists(key, value)) return false;
@@ -736,7 +736,7 @@
      *
      * @param key
      * @param value
-     * @returns
+     * @returns {Number||*}
      */
     this.zrank = function (key, value) {
         if (!this.zsort(key)) return false;
