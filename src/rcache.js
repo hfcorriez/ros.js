@@ -6,19 +6,19 @@
  *   http://www.opensource.org/licenses/mit-license.php
  */
 
-;(function() {
+;(function () {
     /**
      * Extend each method of Array
      * @param fn
      * @return {Array}
      */
-    Array.prototype.each = function(fn){
+    Array.prototype.each = function (fn) {
         fn = fn || Function.K;
         var a = [];
         var args = Array.prototype.slice.call(arguments, 1);
-        for(var i = 0; i < this.length; i++){
-            var res = fn.apply(this,[this[i],i].concat(args));
-            if(res != null) a.push(res);
+        for (var i = 0; i < this.length; i++) {
+            var res = fn.apply(this, [this[i], i].concat(args));
+            if (res != null) a.push(res);
         }
         return a;
     };
@@ -27,10 +27,10 @@
      * Extend unique method of Array
      * @return {Array}
      */
-    Array.prototype.uniquelize = function(){
+    Array.prototype.uniquelize = function () {
         var ra = new Array();
-        for(var i = 0; i < this.length; i ++){
-            if(!ra.contains(this[i])){
+        for (var i = 0; i < this.length; i++) {
+            if (!ra.contains(this[i])) {
                 ra.push(this[i]);
             }
         }
@@ -42,7 +42,7 @@
      * @param item
      * @return {Boolean}
      */
-    Array.prototype.contains = function(item){
+    Array.prototype.contains = function (item) {
         return RegExp(item).test(this);
     };
 
@@ -195,7 +195,7 @@
      * @returns {Number}
      */
     this._sindex = function (key, value) {
-        for (var i in data[key]) if (data[key][i] == value ) return i;
+        for (var i in data[key]) if (data[key][i] == value) return i;
         return -1;
     };
 
@@ -301,7 +301,9 @@
     this.sinter = function (key1, key2) {
         if (!this._isSet(key1) || !this._isSet(key2)) return false;
 
-        return data[key1].each(function(o){return data[key2].contains(o) ? o : null});
+        return data[key1].each(function (o) {
+            return data[key2].contains(o) ? o : null
+        });
     };
 
     /**
@@ -325,7 +327,9 @@
     this.sdiff = function (key1, key2) {
         if (!this._isSet(key1) || !this._isSet(key2)) return false;
 
-        return data[key1].each(function(o){return data[key2].contains(o) ? null : o});
+        return data[key1].each(function (o) {
+            return data[key2].contains(o) ? null : o
+        });
     };
 
     /**
@@ -783,7 +787,7 @@
      * @param value
      * @private
      */
-    this._save = function(key, value) {
+    this._save = function (key, value) {
         if (typeof value == 'string' && this._isNumber(value)) {
             meta[key] = 'number';
         } else if (typeof value == 'object' && Object.prototype.toString.apply(value) === '[object Array]') {
@@ -799,7 +803,7 @@
      * @return {*}
      * @private
      */
-    this._meta = function(key) {
+    this._meta = function (key) {
         return meta.hasOwnProperty(key) ? meta[key] : false;
     };
 
@@ -810,7 +814,7 @@
      * @return {Boolean}
      * @private
      */
-    this._isNumber = function(value) {
+    this._isNumber = function (value) {
         return !isNaN(Number(value));
     };
 
@@ -821,7 +825,7 @@
      * @return {*}
      * @private
      */
-    this._toString = function(value) {
+    this._toString = function (value) {
         if (typeof value == 'number' || typeof value == 'string') return value.toString();
         return false;
     };
@@ -833,7 +837,7 @@
      * @return {*}
      * @private
      */
-    this._toNumber = function(value) {
+    this._toNumber = function (value) {
         if (typeof value == 'number') return value;
         if (!isNaN(Number(value))) return Number(value);
         return false;
@@ -846,10 +850,10 @@
      * @return {Boolean}
      * @private
      */
-    this._isSet = function(key) {
+    this._isSet = function (key) {
         return this._meta(key) == 'array';
     };
 
     window.rcache = this;
     return window;
-}) ();
+})();
