@@ -99,7 +99,7 @@ describe('Key', function () {
         it('Get and set a non-exist key.', function () {
             // 不存在的情况下
             var old = rcache.getset('key.13', 'k13');
-            assert(false == old);
+            assert(null == old);
             assert('k13' == rcache.get('key.13'));
         });
 
@@ -135,7 +135,7 @@ describe('Key', function () {
             assert('12' == rcache.get('key.14'));
         });
 
-        it('Append other data type.', function () {
+        it('Append other type of data.', function () {
             // 不支持其他数据类型
             rcache.append('key.14', ['c', 'd']);
             assert('12' == rcache.get('key.14'));
