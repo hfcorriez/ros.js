@@ -62,6 +62,7 @@
     window.rcache = {
         /**
          * Exist a key?
+         *
          * @param key
          * @return {Boolean}
          */
@@ -70,50 +71,52 @@
         },
 
         /**
-         * 获取键值
+         * Get a key
          *
          * @param key
+         * @return {*}
          */
         get:function (key) {
             return this.exists(key) ? data[key] : null;
         },
 
         /**
-         * 存储键值对
+         * Set a key-value pair
          *
          * @param key
          * @param value
+         * @return {Boolean}
          */
         set:function (key, value) {
             data[key] = value;
-            this._save(key, value);
-            return true;
+            return (this._save(key, value), true);
         },
 
         /**
-         * 删除
+         * Delete a key
          *
-         * @param key
+         * @return {Boolean}
          */
         del:function (key) {
-            return delete data[key];
+            return this.exists(key) ? (delete data[key], delete meta[key], 1) : 0;
         },
 
         /**
-         * 将一个key递增1
+         * Increasing a key
          *
          * @param key
+         * @return {Number}
          */
         incr:function (key) {
             return this.incrby(key, 1);
         },
 
         /**
-         * 将一个key按照count递增
+         * Increasing a key with count
          *
          * @param key
          * @param count
-         * @returns {Boolean}
+         * @returns {Number}
          */
         incrby:function (key, count) {
             if (!this._isNumber(count)) return this._error('Error type of count');
@@ -123,21 +126,21 @@
         },
 
         /**
-         * 将一个key递减1
+         * Decreasing a key
          *
          * @param key
-         * @returns {Boolean}
+         * @returns {Number}
          */
         decr:function (key) {
             return this.decrby(key, 1);
         },
 
         /**
-         * 将一个key按照count递减
+         * Decreasing a key with count
          *
          * @param key
          * @param count
-         * @returns {Boolean}
+         * @returns {Number}
          */
         decrby:function (key, count) {
             if (!this._isNumber(count)) return this._error('Error type of count');
@@ -147,11 +150,11 @@
         },
 
         /**
-         * 存储一个key，并返回存储前的key值
+         * Set a value and get old value
          *
          * @param key
          * @param value
-         * @returns {*||Boolean}
+         * @returns {*||Null||Boolean}
          */
         getset:function (key, value) {
             var older = this.exists(key) ? this.get(key) : null;
@@ -160,7 +163,7 @@
         },
 
         /**
-         * 当key不存在的时候存储
+         * Set if not exist
          *
          * @param key
          * @param value
@@ -171,11 +174,11 @@
         },
 
         /**
-         * 将一个key值append字符串
+         * Append string to a key
          *
          * @param key
          * @param value
-         * @returns {Boolean}
+         * @returns {Number}
          */
         append:function (key, value) {
             value = this._toString(value);
@@ -191,7 +194,7 @@
          */
 
         /**
-         * 返回一个元素在集合中的索引
+         * Get index of given value in the set
          *
          * @param key
          * @param value
@@ -204,7 +207,7 @@
         },
 
         /**
-         * 检查一个元素是否属于一个集合
+         * Check if the member of set
          *
          * @param key
          * @param value
@@ -213,25 +216,24 @@
         sismember:function (key, value) {
             if (!this._isSet(key)) return this._error('Error type of set');
 
-            return !!(this._sindex(key, value) > -1);
+            return this.exists(key) ? !!(this._sindex(key, value) > -1) : false;
         },
 
         /**
-         * 将一个元素添加到一个集合
+         * Add a member to set.
          *
          * @param key
          * @param value
          * @returns {Boolean}
          */
         sadd:function (key, value) {
-            if (!this.exists(key)) return (this.set(key, [value]), true);
             if (!this._isSet(key)) return this._error('Error type of set');
-            if (!this.sismember(key, value)) return (data[key].push(value), true);
-            return false;
+
+            return this.exists(key) ? (!this.sismember(key, value) ? (data[key].push(value), true) : false) : (this.set(key, [value]), true);
         },
 
         /**
-         * 将一个元素从集合中删除
+         * Remove given value of set
          *
          * @param key
          * @param value
@@ -241,36 +243,35 @@
             if (!this._isSet(key)) return this._error('Error type of set');
 
             var index = this._sindex(key, value);
-            return index > -1 ? (data[key].splice(index, index + 1), true) : false;
+            return this.exists(key) && index > -1 ? (data[key].splice(index, index + 1), true) : false;
         },
 
         /**
-         * 将集合中最后一个元素抛出
+         * Pop last member of set
          *
          * @param key
-         * @returns {*}
+         * @returns {*||Null}
          */
         spop:function (key) {
-            if (!this.exists(key)) return null;
             if (!this._isSet(key)) return this._error('Error type of set');
 
-            return data[key].length > 0 ? data[key].pop() : null;
+            return this.exists(key) && data[key].length > 0 ? data[key].pop() : null;
         },
 
         /**
-         * 返回集合的长度
+         * Get length of set
          *
          * @param key
          * @returns {Number}
          */
         scard:function (key) {
-            if (!this._isSet(key) || !this.exists(key)) return 0;
+            if (!this._isSet(key)) return this._error('Error type of set');
 
-            return data[key].length;
+            return this.exists(key) ? data[key].length : 0;
         },
 
         /**
-         * 将一个元素从key1集合移动到key2集合
+         * Move value from set1 to set2
          *
          * @param key1
          * @param key2
@@ -278,73 +279,124 @@
          * @returns {Boolean}
          */
         smove:function (key1, key2, value) {
-            if (!this._isSet(key)) return this._error('Error type of set');
+            if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
 
-            if (this.srem(key1, value)) return this.sadd(key2, value);
-            return false;
+            return this.srem(key1, value) ? (this.sadd(key2, value), true) : false;
         },
 
         /**
-         * 返回集合中的所有元素
+         * Get all members of set
          *
          * @param key
-         * @returns {Object}
+         * @returns {Array}
          */
         smembers:function (key) {
-            if (!this.exists(key)) return [];
             if (!this._isSet(key)) return this._error('Error type of set');
 
-            return data[key];
+            return this.exists(key) ? data[key] : [];
         },
 
         /**
-         * 获取两个集合的交集
+         * Get intersection of two set
          *
          * @param key1
          * @param key2
+         * @returns {Array}
          */
         sinter:function (key1, key2) {
             if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
 
-            return data[key1].each(function (o) {
-                return data[key2].contains(o) ? o : null
+            var data1 = this.exists(key1) ? data[key1] : [];
+            var data2 = this.exists(key2) ? data[key2] : [];
+
+            return data1.each(function (o) {
+                return data2.contains(o) ? o : null
             });
         },
 
         /**
-         * 返回两个集合的并集
+         * Store inter of two set
+         *
+         * @param key
+         * @param key1
+         * @param key2
+         * @returns {Number||Boolean}
+         */
+        sinterstore:function (key, key1, key2){
+            var set = this.sinter(key1, key2);
+            return set !== false ? (this.set(key, set), set.length) : false;
+        },
+
+        /**
+         * Get union of two set
          *
          * @param key1
          * @param key2
+         * @returns {Array}
          */
         sunion:function (key1, key2) {
             if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
 
-            return data[key1].concat(data[key2]).uniquelize();
+            var data1 = this.exists(key1) ? data[key1] : [];
+            var data2 = this.exists(key2) ? data[key2] : [];
+
+            return data1.concat(data2).uniquelize();
         },
 
         /**
-         * 返回两个集合的差集
+         * Store union of two set
+         *
+         * @param key
+         * @param key1
+         * @param key2
+         * @returns {Number||Boolean}
+         */
+        sunionstore:function (key, key1, key2){
+            var set = this.sunion(key1, key2);
+            return set !== false ? (this.set(key, set), set.length) : false;
+        },
+
+        /**
+         * Get diff of two set
          *
          * @param key1
          * @param key2
+         * @returns {Array}
          */
         sdiff:function (key1, key2) {
             if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
 
-            return data[key1].each(function (o) {
-                return data[key2].contains(o) ? null : o
+            var data1 = this.exists(key1) ? data[key1] : [];
+            var data2 = this.exists(key2) ? data[key2] : [];
+
+            return data1.each(function (o) {
+                return data2.contains(o) ? null : o
             });
         },
 
         /**
-         * 随机返回集合中的一个元素
+         * Store diff of two set
          *
          * @param key
+         * @param key1
+         * @param key2
+         * @returns {Number||Boolean}
+         */
+        sdiffstore:function (key, key1, key2){
+            var set = this.sdiff(key1, key2);
+            return set !== false ? (this.set(key, set), set.length) : false;
+        },
+
+        /**
+         * Get random member of set
+         *
+         * @param key
+         * @returns {Null||*}
          */
         srandmember:function (key) {
             if (!this._isSet(key)) return this._error('Error type of set');
 
+            if (!this.exists(key)) return null;
             var length = data[key].length - 1,
                 random = (Math.random() * length).toFixed(0);
             return data[key][random];
@@ -784,8 +836,9 @@
                 meta[key] = 'number';
             } else if (typeof value == 'object' && Object.prototype.toString.apply(value) === '[object Array]') {
                 meta[key] = 'array';
+            } else {
+                meta[key] = typeof value;
             }
-            return meta[key] == typeof value;
         },
 
         /**
@@ -843,7 +896,7 @@
          * @private
          */
         _isSet:function (key) {
-            return this._meta(key) == 'array';
+            return this._meta(key) == 'array' || this._meta(key) === false;
         },
 
         /**
