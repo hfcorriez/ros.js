@@ -59,7 +59,6 @@ describe('Key', function () {
             // 非数字字符串情况下
             rcache.set('incr.2', '2k');
             var s2 = rcache.incr('incr.2');
-            console.log(s2);
             assert(false === s2);
             assert('2k' === rcache.get('incr.2'));
         });
