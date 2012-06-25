@@ -46,6 +46,20 @@
         return RegExp(item).test(this);
     };
 
+    /**
+     * Extent size method of Object
+     *
+     * @param obj
+     * @return {Number}
+     */
+    Object.prototype.size = function () {
+        var size = 0, key;
+        for (key in this) {
+            if (this.hasOwnProperty(key)) size++;
+        }
+        return size;
+    };
+
     // Storage of data
     var data = {};
 
@@ -99,6 +113,18 @@
          */
         del:function (key) {
             return this.exists(key) ? (delete data[key], delete meta[key], 1) : 0;
+        },
+
+        /**
+         *
+         * @param pattern
+         * @return {Array}
+         */
+        keys:function (pattern) {
+            var keys = [], key;
+            var re = new RegExp('^' + pattern.replace('*', '(.*?)') + '$');
+            for (key in data) if (data.hasOwnProperty(key) && true == re.test(key)) keys.push(key);
+            return keys;
         },
 
         /**
@@ -189,6 +215,48 @@
             return data[key].length;
         },
 
+        /**
+         * Rename a key to new key
+         *
+         * @param key1
+         * @param key2
+         * @returns {Boolean}
+         */
+        rename:function (key1, key2) {
+            return this.exists(key1) ? (this.set(key2, this.get(key1)), this.del(key1), true) : this._error('Error key to rename');
+        },
+
+        /**
+         * Rename if new key not exists
+         *
+         * @param key1
+         * @param key2
+         * @return {Boolean}
+         */
+        renamenx: function(key1, key2) {
+            return !this.exists(key2) ? this.rename(key1, key2) : false;
+        },
+
+        /**
+         * Get random key
+         *
+         * @returns {String}
+         */
+        randomkey:function () {
+            var key, result, count = 0;
+            for (key in data) if (data.hasOwnProperty(key) && Math.random() < 1 / ++count) result = key;
+            return result;
+        },
+
+        /**
+         * Get type of key
+         *
+         * @return {Boolean||String}
+         */
+        type: function() {
+            return this._meta(key);
+        },
+
         /*
          * Set
          */
@@ -202,7 +270,7 @@
          * @private
          */
         _sindex:function (key, value) {
-            for (var i in data[key]) if (data[key][i] == value) return i;
+            for (var i in data[key]) if (data[key].hasOwnProperty(i) && data[key][i] == value) return i;
             return -1;
         },
 
@@ -322,7 +390,7 @@
          * @param key2
          * @returns {Number||Boolean}
          */
-        sinterstore:function (key, key1, key2){
+        sinterstore:function (key, key1, key2) {
             var set = this.sinter(key1, key2);
             return set !== false ? (this.set(key, set), set.length) : false;
         },
@@ -351,7 +419,7 @@
          * @param key2
          * @returns {Number||Boolean}
          */
-        sunionstore:function (key, key1, key2){
+        sunionstore:function (key, key1, key2) {
             var set = this.sunion(key1, key2);
             return set !== false ? (this.set(key, set), set.length) : false;
         },
@@ -382,7 +450,7 @@
          * @param key2
          * @returns {Number||Boolean}
          */
-        sdiffstore:function (key, key1, key2){
+        sdiffstore:function (key, key1, key2) {
             var set = this.sdiff(key1, key2);
             return set !== false ? (this.set(key, set), set.length) : false;
         },
@@ -452,10 +520,7 @@
         hlen:function (key) {
             if (!this.exists(key)) return 0;
 
-            var len = 0;
-            for (i in data[key]) len++;
-
-            return len;
+            return data[key].size();
         },
 
         /**
@@ -699,11 +764,7 @@
         zcard:function (key) {
             if (!this.exists(key)) return 0;
 
-            length = 0;
-            for (k in data[key]) {
-                length++;
-            }
-            return length;
+            return data[key].size();
         },
 
         /**
@@ -822,6 +883,39 @@
             data[key] = newdata;
             newdata = null;
             return data[key];
+        },
+
+        /*
+         * Base
+         */
+
+        /**
+         * Flush all
+         * @return {Boolean}
+         */
+        flushall:function () {
+            data = {};
+            meta = {};
+            error = null;
+            return true;
+        },
+
+        /**
+         * Flush database
+         *
+         * @return {Boolean}
+         */
+        flushdb:function () {
+            return this.flushall();
+        },
+
+        /**
+         * Get database length
+         *
+         * @return {Number}
+         */
+        dbsize:function () {
+            return data.size();
         },
 
         /**
