@@ -142,7 +142,7 @@
          *
          * @param key
          * @param count
-         * @returns {Number}
+         * @return {Number}
          */
         incrby:function (key, count) {
             if (!this._isNumber(count)) return this._error('Error type of count');
@@ -155,7 +155,7 @@
          * Decreasing a key
          *
          * @param key
-         * @returns {Number}
+         * @return {Number}
          */
         decr:function (key) {
             return this.decrby(key, 1);
@@ -166,7 +166,7 @@
          *
          * @param key
          * @param count
-         * @returns {Number}
+         * @return {Number}
          */
         decrby:function (key, count) {
             if (!this._isNumber(count)) return this._error('Error type of count');
@@ -180,7 +180,7 @@
          *
          * @param key
          * @param value
-         * @returns {*||Null||Boolean}
+         * @return {*||Null||Boolean}
          */
         getset:function (key, value) {
             var older = this.exists(key) ? this.get(key) : null;
@@ -193,7 +193,7 @@
          *
          * @param key
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         setnx:function (key, value) {
             return this.exists(key) ? false : (this.set(key, value), true);
@@ -204,7 +204,7 @@
          *
          * @param key
          * @param value
-         * @returns {Number}
+         * @return {Number}
          */
         append:function (key, value) {
             value = this._toString(value);
@@ -220,7 +220,7 @@
          *
          * @param key1
          * @param key2
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         rename:function (key1, key2) {
             return this.exists(key1) ? (this.set(key2, this.get(key1)), this.del(key1), true) : this._error('Error key to rename');
@@ -240,7 +240,7 @@
         /**
          * Get random key
          *
-         * @returns {String}
+         * @return {String}
          */
         randomkey:function () {
             var key, result, count = 0;
@@ -266,7 +266,7 @@
          *
          * @param key
          * @param value
-         * @returns {Number}
+         * @return {Number}
          * @private
          */
         _sindex:function (key, value) {
@@ -279,7 +279,7 @@
          *
          * @param key
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         sismember:function (key, value) {
             if (!this._isSet(key)) return this._error('Error type of set');
@@ -292,7 +292,7 @@
          *
          * @param key
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         sadd:function (key, value) {
             if (!this._isSet(key)) return this._error('Error type of set');
@@ -305,7 +305,7 @@
          *
          * @param key
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         srem:function (key, value) {
             if (!this._isSet(key)) return this._error('Error type of set');
@@ -318,7 +318,7 @@
          * Pop last member of set
          *
          * @param key
-         * @returns {*||Null}
+         * @return {*||Null}
          */
         spop:function (key) {
             if (!this._isSet(key)) return this._error('Error type of set');
@@ -330,7 +330,7 @@
          * Get length of set
          *
          * @param key
-         * @returns {Number}
+         * @return {Number}
          */
         scard:function (key) {
             if (!this._isSet(key)) return this._error('Error type of set');
@@ -344,7 +344,7 @@
          * @param key1
          * @param key2
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         smove:function (key1, key2, value) {
             if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
@@ -356,7 +356,7 @@
          * Get all members of set
          *
          * @param key
-         * @returns {Array}
+         * @return {Array}
          */
         smembers:function (key) {
             if (!this._isSet(key)) return this._error('Error type of set');
@@ -369,7 +369,7 @@
          *
          * @param key1
          * @param key2
-         * @returns {Array}
+         * @return {Array}
          */
         sinter:function (key1, key2) {
             if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
@@ -388,7 +388,7 @@
          * @param key
          * @param key1
          * @param key2
-         * @returns {Number||Boolean}
+         * @return {Number||Boolean}
          */
         sinterstore:function (key, key1, key2) {
             var set = this.sinter(key1, key2);
@@ -400,7 +400,7 @@
          *
          * @param key1
          * @param key2
-         * @returns {Array}
+         * @return {Array}
          */
         sunion:function (key1, key2) {
             if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
@@ -417,7 +417,7 @@
          * @param key
          * @param key1
          * @param key2
-         * @returns {Number||Boolean}
+         * @return {Number||Boolean}
          */
         sunionstore:function (key, key1, key2) {
             var set = this.sunion(key1, key2);
@@ -429,7 +429,7 @@
          *
          * @param key1
          * @param key2
-         * @returns {Array}
+         * @return {Array}
          */
         sdiff:function (key1, key2) {
             if (!this._isSet(key1) || !this._isSet(key2)) return this._error('Error type of set');
@@ -448,7 +448,7 @@
          * @param key
          * @param key1
          * @param key2
-         * @returns {Number||Boolean}
+         * @return {Number||Boolean}
          */
         sdiffstore:function (key, key1, key2) {
             var set = this.sdiff(key1, key2);
@@ -459,7 +459,7 @@
          * Get random member of set
          *
          * @param key
-         * @returns {Null||*}
+         * @return {Null||*}
          */
         srandmember:function (key) {
             if (!this._isSet(key)) return this._error('Error type of set');
@@ -479,7 +479,7 @@
          *
          * @param key
          * @param field
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         hexists:function (key, field) {
             return this._isHash(key) ? data[key].hasOwnProperty(field) : false;
@@ -490,7 +490,7 @@
          *
          * @param key
          * @param field
-         * @returns {*}
+         * @return {*}
          */
         hget:function (key, field) {
             if (!this.hexists(key, field)) return null;
@@ -504,7 +504,7 @@
          * @param key
          * @param field
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         hset:function (key, field, value) {
             if (!this.exists(key)) this.set(key, {});
@@ -528,7 +528,7 @@
          * Get size of hash
          *
          * @param key
-         * @returns {Number}
+         * @return {Number}
          */
         hlen:function (key) {
             if (!this._isHash(key)) return this._error("Error type of hash");
@@ -542,7 +542,7 @@
          *
          * @param key
          * @param field
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         hdel:function (key, field) {
             return this.hexists(key, field) ? (delete data[key][field], true) : false;
@@ -552,7 +552,7 @@
          * Get all fields of hash
          *
          * @param key
-         * @returns {*}
+         * @return {*}
          */
         hgetall:function (key) {
             if (!this._isHash(key)) return this._error("Error type of hash");
@@ -566,7 +566,7 @@
          * @param key
          * @param field
          * @param count
-         * @returns {Number||Boolean}
+         * @return {Number||Boolean}
          */
         hincrby:function (key, field, count) {
             if (!this._isHash(key)) return this._error("Error type of hash");
@@ -589,7 +589,7 @@
          * @param key
          * @param field
          * @param count
-         * @returns {Number||Boolean}
+         * @return {Number||Boolean}
          */
         hdecrby:function (key, field, count) {
             if (!this._isHash(key)) return this._error("Error type of hash");
@@ -610,7 +610,7 @@
          * Get all fields in hash
          *
          * @param key
-         * @returns {Array}
+         * @return {Array}
          */
         hkeys:function (key) {
             if (!this._isHash(key)) return this._error("Error type of hash");
@@ -625,7 +625,7 @@
          * Get all values in hash
          *
          * @param key
-         * @returns {Array}
+         * @return {Array}
          */
         hvals:function (key) {
             if (!this._isHash(key)) return this._error("Error type of hash");
@@ -685,7 +685,7 @@
          * @param key
          * @param index
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         lset:function (key, index, value) {
             if (!this.exists(key)) data[key] = [];
@@ -698,7 +698,7 @@
          *
          * @param key
          * @param value
-         * @returns {Number}
+         * @return {Number}
          */
         lpush:function (key, value) {
             if (!this.exists(key)) data[key] = [];
@@ -711,7 +711,7 @@
          *
          * @param key
          * @param value
-         * @returns {Number}
+         * @return {Number}
          */
         rpush:function (key, value) {
             if (!this.exists(key)) data[key] = [];
@@ -723,7 +723,7 @@
          * 将链表最前一个元素取出
          *
          * @param key
-         * @returns {*}
+         * @return {*}
          */
         lpop:function (key) {
             if (!this.exists(key)) return false;
@@ -735,7 +735,7 @@
          * 将链表最后一个元素抛出
          *
          * @param key
-         * @returns {*}
+         * @return {*}
          */
         rpop:function (key) {
             if (!this.exists(key)) return false;
@@ -760,7 +760,7 @@
          * @param key
          * @param start
          * @param end
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         ltrim:function (key, start, end) {
             if (!this.exists(key)) return false;
@@ -774,7 +774,7 @@
          *
          * @param key
          * @param index
-         * @returns {*}
+         * @return {*}
          */
         lindex:function (key, index) {
             if (!this.exists(key)) return false;
@@ -802,7 +802,7 @@
          * @param key
          * @param value
          * @param score
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         zadd:function (key, value, score) {
             if (!this.exists(key)) data[key] = {},
@@ -816,7 +816,7 @@
          *
          * @param key
          * @param value
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         zrem:function (key, value) {
             if (!this.zexists(key, value)) return false;
@@ -828,7 +828,7 @@
          * 获取排序集合的长度
          *
          * @param key
-         * @returns {Number}
+         * @return {Number}
          */
         zcard:function (key) {
             if (!this.exists(key)) return 0;
@@ -842,7 +842,7 @@
          * @param key
          * @param value
          * @param score
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         zincrby:function (key, value, score) {
             if (!this.zexists(key, value)) data[key][value] = 0;
@@ -888,7 +888,7 @@
          * @param key
          * @param start
          * @param end
-         * @returns {Array}
+         * @return {Array}
          * @todo 需要先排序
          */
         zrange:function (key, start, end) {
@@ -902,7 +902,7 @@
          *
          * @param key
          * @param value
-         * @returns {*}
+         * @return {*}
          */
         zscore:function (key, value) {
             if (!this.zexists(key, value)) return false;
@@ -915,7 +915,7 @@
          *
          * @param key
          * @param value
-         * @returns {Number||*}
+         * @return {Number||*}
          */
         zrank:function (key, value) {
             if (!this.zsort(key)) return false;
