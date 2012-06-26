@@ -233,7 +233,7 @@
          * @param key2
          * @return {Boolean}
          */
-        renamenx: function(key1, key2) {
+        renamenx:function (key1, key2) {
             return !this.exists(key2) ? this.rename(key1, key2) : false;
         },
 
@@ -253,7 +253,7 @@
          *
          * @return {Boolean||String}
          */
-        type: function() {
+        type:function () {
             return this._meta(key);
         },
 
@@ -475,17 +475,19 @@
          */
 
         /**
-         * 检查field是否在hash中存在
+         * Check if field exist in hash
          *
          * @param key
          * @param field
+         * @returns {Boolean}
          */
         hexists:function (key, field) {
-            return typeof data[key][field] != 'undefined';
+            return this._isHash(key) ? data[key].hasOwnProperty(field) : false;
         },
 
         /**
-         * 返回hash中的一个字段
+         * Get field in hash
+         *
          * @param key
          * @param field
          * @returns {*}
@@ -497,7 +499,7 @@
         },
 
         /**
-         * 在hash中设置字段
+         * Set field in hash
          *
          * @param key
          * @param field
@@ -505,95 +507,162 @@
          * @returns {Boolean}
          */
         hset:function (key, field, value) {
-            if (!this.exists(key)) data[key] = {},
+            if (!this.exists(key)) this.set(key, {});
 
-                data[key][field] = value;
-            return true;
+            return (data[key][field] = value, true);
         },
 
         /**
-         * 返回hash表的长度
+         * Set filed in hash if not exists
+         *
+         * @param key
+         * @param field
+         * @param value
+         * @return {Boolean}
+         */
+        hsetnx:function (key, field, value) {
+            return !this.hexists(key, field) ? this.hset(key, field, value) : false;
+        },
+
+        /**
+         * Get size of hash
          *
          * @param key
          * @returns {Number}
          */
         hlen:function (key) {
+            if (!this._isHash(key)) return this._error("Error type of hash");
             if (!this.exists(key)) return 0;
 
             return data[key].size();
         },
 
         /**
-         * 删除hash中的一个字段
+         * Delete field in hash
          *
          * @param key
          * @param field
          * @returns {Boolean}
          */
         hdel:function (key, field) {
-            return delete data[key][field];
+            return this.hexists(key, field) ? (delete data[key][field], true) : false;
         },
 
         /**
-         * 获取hash表
+         * Get all fields of hash
          *
          * @param key
          * @returns {*}
          */
         hgetall:function (key) {
-            return this.get(key);
+            if (!this._isHash(key)) return this._error("Error type of hash");
+
+            return this.exists(key) ? data[key] : {};
         },
 
         /**
-         * 将hash的一个字段按照给定数值递增
+         * Increasing a field by count in hash
          *
          * @param key
          * @param field
          * @param count
-         * @returns {Boolean}
+         * @returns {Number||Boolean}
          */
         hincrby:function (key, field, count) {
-            if (typeof count == 'undefined') count = 1;
+            if (!this._isHash(key)) return this._error("Error type of hash");
 
-            if (!this.hget(key, field)) data[key][field] = parseInt(count);
-            else data[key][field] += parseInt(count);
+            count = this._toNumber(count);
+            if (false === count) return this._error("Error type of count");
+            var value = this.hget(key, field);
+            var vcount = this._toNumber(value);
+            if (null !== value && false === vcount) return this._error("Error type of value");
 
-            return true;
+            if (null === value) this.hset(key, field, count);
+            else data[key][field] = vcount + count;
+
+            return data[key][field];
         },
 
         /**
-         * 将hash中的一个字段按照给定数值递减
+         * Decreasing a field by count in hash
          *
          * @param key
          * @param field
          * @param count
-         * @returns {Boolean}
+         * @returns {Number||Boolean}
          */
         hdecrby:function (key, field, count) {
-            if (typeof count == 'undefined') count = 1;
+            if (!this._isHash(key)) return this._error("Error type of hash");
 
-            if (!this.hget(key, field)) data[key][field] = -parseInt(count);
-            else data[key][field] -= parseInt(count);
+            count = this._toNumber(count);
+            if (false === count) return this._error("Error type of count");
+            var value = this.hget(key, field);
+            var vcount = this._toNumber(value);
+            if (null !== value && false === vcount) return this._error("Error type of value");
 
-            return true;
+            if (null === value) this.hset(key, field, -count);
+            else data[key][field] = vcount - count;
+
+            return data[key][field];
         },
 
         /**
-         * 返回hash表的所有字段名
+         * Get all fields in hash
          *
          * @param key
          * @returns {Array}
          */
         hkeys:function (key) {
+            if (!this._isHash(key)) return this._error("Error type of hash");
             if (!this.exists(key)) return [];
 
-            keys = [];
-            i = 0;
-            for (field in data[key]) {
-                keys[i] = field;
-                i++;
-            }
+            var keys = [];
+            for (field in data[key]) if (data[key].hasOwnProperty(field))keys.push(field);
             return keys;
+        },
+
+        /**
+         * Get all values in hash
+         *
+         * @param key
+         * @returns {Array}
+         */
+        hvals:function (key) {
+            if (!this._isHash(key)) return this._error("Error type of hash");
+            if (!this.exists(key)) return [];
+
+            var keys = [];
+            for (field in data[key]) if (data[key].hasOwnProperty(field))keys.push(data[key][field]);
+            return keys;
+        },
+
+        /**
+         * Multiple get field in hash
+         *
+         * @param key
+         * @param fields
+         * @return {Object}
+         */
+        hmget:function (key, fields) {
+            if (!this._isHash(key)) return this._error("Error type of hash");
+
+            var values = {};
+            for (var i in fields) values[fields[i]] = this.hget(key, fields[i]);
+            return values;
+        },
+
+        /**
+         * Multiple set field in hash
+         *
+         * @param key
+         * @param hash
+         * @return {Object}
+         */
+        hmset:function (key, hash) {
+            if (!this._isHash(key)) return this._error("Error type of hash");
+
+            for (var i in hash) if (hash.hasOwnProperty(i)) data[key][i] = hash[i];
+            return true;
         },
 
         /*
@@ -990,6 +1059,28 @@
          * @private
          */
         _isSet:function (key) {
+            return this._meta(key) == 'array' || this._meta(key) === false;
+        },
+
+        /**
+         * Is hash?
+         *
+         * @param key
+         * @return {Boolean}
+         * @private
+         */
+        _isHash:function (key) {
+            return this._meta(key) == 'object' || this._meta(key) === false;
+        },
+
+        /**
+         * Is list?
+         *
+         * @param key
+         * @return {Boolean}
+         * @private
+         */
+        _isList:function (key) {
             return this._meta(key) == 'array' || this._meta(key) === false;
         },
 
