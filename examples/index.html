@@ -2,49 +2,49 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>JS RCache Exapmle</title>
+    <title>JS ros Exapmle</title>
     <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../lib/ros.js"></script>
     <script type="text/javascript" src="../lib/jquery.ros.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $.rcache.set('key', 'value');
-            $.rcache.get('key', 'default');
-            $.rcache.hset('result', 'key', $.rcache.get('key'));
+            $.ros.set('key', 'value');
+            $.ros.get('key', 'default');
+            $.ros.hset('result', 'key', $.ros.get('key'));
 
-            $.rcache.rpush('list', 1);
-            $.rcache.lpush('list', 'message 2');
-            $.rcache.rpush('list', {data:'message 3', id:3});
-            $.rcache.hset('result', 'list', $.rcache.get('list'));
+            $.ros.rpush('list', 1);
+            $.ros.lpush('list', 'message 2');
+            $.ros.rpush('list', {data:'message 3', id:3});
+            $.ros.hset('result', 'list', $.ros.get('list'));
 
-            $.rcache.hset('hash', 'name', 'hfcorriez');
-            $.rcache.hset('hash', 'sexy', 'male');
-            $.rcache.hset('result', 'hash', $.rcache.get('hash'));
+            $.ros.hset('hash', 'name', 'hfcorriez');
+            $.ros.hset('hash', 'sexy', 'male');
+            $.ros.hset('result', 'hash', $.ros.get('hash'));
 
-            $.rcache.sadd('set', 'hfcorriez');
-            $.rcache.sadd('set', 'fdream');
-            $.rcache.sadd('set', 'hfcorriez');
-            $.rcache.hset('result', 'set', $.rcache.get('set'));
+            $.ros.sadd('set', 'hfcorriez');
+            $.ros.sadd('set', 'fdream');
+            $.ros.sadd('set', 'hfcorriez');
+            $.ros.hset('result', 'set', $.ros.get('set'));
 
-            $.rcache.incr('incr');
-            $.rcache.incrby('incr', 2);
-            $.rcache.hset('result', 'incr', $.rcache.get('incr'));
+            $.ros.incr('incr');
+            $.ros.incrby('incr', 2);
+            $.ros.hset('result', 'incr', $.ros.get('incr'));
 
-            $.rcache.append('append', 'hello');
-            $.rcache.append('append', ' world');
-            $.rcache.hset('result', 'append', $.rcache.get('append'));
+            $.ros.append('append', 'hello');
+            $.ros.append('append', ' world');
+            $.ros.hset('result', 'append', $.ros.get('append'));
 
-            $.rcache.zadd('myrank', 'a2', 2);
-            $.rcache.zadd('myrank', 'a1', 1);
-            $.rcache.zadd('myrank', 'a4', 4.5);
-            $.rcache.zadd('myrank', 'a3', 3);
-            $.rcache.zsort('myrank');
-            $.rcache.zrem('myrank', 'a3');
-            console.log($.rcache.zcard('myrank'), $.rcache.zrank('myrank', 'a4'));
-            $.rcache.hset('result', 'myrank', $.rcache.get('myrank'));
+            $.ros.zadd('myrank', 'a2', 2);
+            $.ros.zadd('myrank', 'a1', 1);
+            $.ros.zadd('myrank', 'a4', 4.5);
+            $.ros.zadd('myrank', 'a3', 3);
+            $.ros.zsort('myrank');
+            $.ros.zrem('myrank', 'a3');
+            console.log($.ros.zcard('myrank'), $.ros.zrank('myrank', 'a4'));
+            $.ros.hset('result', 'myrank', $.ros.get('myrank'));
 
-            console.log($.rcache.get('result'));
+            console.log($.ros.get('result'));
         });
     </script>
 </head>
