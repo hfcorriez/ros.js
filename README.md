@@ -9,24 +9,24 @@ See api documents  on [redis.io](http://redis.io/commands)
 
 ## Install
 
-    git clone git://github.com/hfcorriez/js-rcache.git
+    git clone git://github.com/hfcorriez/ros.js.git
 
 ## Usage
 通用
 ____
 
-    <script type="text/javascript" src="rcache.js"></script>
+    <script type="text/javascript" src="ros.js"></script>
     <script type="text/javascript">
-    rcache.set('test', 'mytestvalue');
-    console.log(rcache.get('test'));  // log "mytestvalue"
+    ros.set('test', 'mytestvalue');
+    console.log(ros.get('test'));  // log "mytestvalue"
     </script>
 
 jQuery中
 ____
 
-    <script type="text/javascript" src="rcache.js"></script>
-    <script type="text/javascript" src="jquery.rcache.js"></script>
+    <script type="text/javascript" src="ros.js"></script>
+    <script type="text/javascript" src="jquery.ros.js"></script>
     <script type="text/javascript">
-    $.rcache.set('test', 'mytestvalue');
-    console.log($.rcache.get('test'));  // log "mytestvalue"
+    $.ros.set('test', 'mytestvalue');
+    console.log($.ros.get('test'));  // log "mytestvalue"
     </script>
