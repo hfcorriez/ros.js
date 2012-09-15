@@ -1,3 +1,8 @@
+if (typeof module != 'undefined') {
+  var ros = require('./../lib/ros')
+    , assert = require('assert');
+}
+
 describe('Base', function () {
   describe('flusall()', function () {
     it('Flush database.', function () {

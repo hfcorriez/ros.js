@@ -1,3 +1,8 @@
+if (typeof module != 'undefined') {
+  var ros = require('./../lib/ros')
+    , assert = require('assert');
+}
+
 describe('String', function () {
   describe('set()', function () {
     it('Set a value', function () {

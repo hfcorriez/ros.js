@@ -1,3 +1,8 @@
+if (typeof module != 'undefined') {
+  var ros = require('./../lib/ros')
+    , assert = require('assert');
+}
+
 describe('ZSet', function () {
   beforeEach(function () {
     ros.del('zset.1');
