@@ -1,0 +1,19 @@
+
+{
+    "name": "ros"
+  , "description": "Redis Of Storage"
+  , "version": "0.1.0"
+  , "author": "Corrie Zhao <hfcorriez@gmail.com>"
+  , "keywords": ["redis", "storage"]
+  , "dependencies": {
+  }
+  , "devDependencies": {
+      "mocha": "*"
+  }
+  , "main": "./index.js"
+  , "engines": { "node": ">= 0.8.0" }
+  , "repository": {
+      "type": "git"
+    , "url": "git://github.com/hfcorriez/ros.js.git"
+  }
+}
