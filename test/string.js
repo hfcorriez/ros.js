@@ -1,4 +1,4 @@
-describe('Key', function () {
+describe('String', function () {
   describe('set()', function () {
     it('Set a value', function () {
       var ok = ros.set('set.1', '1k');
