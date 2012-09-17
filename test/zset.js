@@ -15,23 +15,37 @@ describe('ZSet', function () {
     ros.zadd('zset.2', 5, 'd');
   });
   describe('zrange()', function () {
-    it('Get range of exists set', function () {
+    it('Get range', function () {
       assert(['c', 'd'].toString() === ros.zrange('zset.2', 0, -1).toString());
     });
     it('Get range of non-exists set', function () {
       assert([].toString() === ros.zrange('zset.3', 0, -1).toString());
     });
+    it('Get range and scores', function () {
+      assert({'c': 4, 'd': 5}.toString() === ros.zrange('zset.2', 0, -1, true).toString());
+    });
+  });
+
+  describe('zrem()', function () {
+    it('Remove element', function () {
+      assert(1 === ros.zrem('zset.1', 'b'));
+      assert(['a', 'c'].toString() === ros.zrange('zset.1', 0, -1).toString());
+    });
   });
 
   describe('zadd()', function () {
-    it('Add exists element to exists set', function () {
+    it('Add exists element', function () {
       assert(0 === ros.zadd('zset.1', 1, 'b'));
     });
-    it('Add non-exists element to exists set', function () {
+    it('Add non-exists element', function () {
       assert(1 === ros.zadd('zset.2', 7, 'e'));
     });
     it('Add element to non-exists set', function () {
       assert(1 === ros.zadd('zset.3', 1, 'a'));
+    });
+    it('Add exists element', function () {
+      assert(0 === ros.zadd('zset.1', 4, 'a'));
+      assert(['b', 'c', 'a'].toString() === ros.zrange('zset.1', 0, -1).toString());
     });
   });
 
@@ -78,7 +92,7 @@ describe('ZSet', function () {
   });
 
   describe('zcard()', function () {
-    it('Get total count of exists set', function () {
+    it('Get total count', function () {
       assert(3 === ros.zcard('zset.1'));
     });
 
@@ -88,7 +102,7 @@ describe('ZSet', function () {
   });
 
   describe('zcount()', function () {
-    it('Get count of exists set', function () {
+    it('Get count', function () {
       assert(3 === ros.zcount('zset.1', 0, -1));
       assert(1 === ros.zcount('zset.1', 1, 1));
     });
@@ -113,6 +127,27 @@ describe('ZSet', function () {
   describe('zrevrangebyscore()', function () {
     it('Get range with score', function () {
       assert(['c', 'b'].toString() === ros.zrevrangebyscore('zset.1', 1.5, 3).toString());
+    });
+  });
+
+  describe('zremrangebyrank()', function () {
+    it('Remove elements by rank', function () {
+      assert(2 === ros.zremrangebyrank('zset.1', 0, 1));
+      assert(['c'].toString() == ros.zrange('zset.1', 0, -1).toString());
+    });
+  });
+
+  describe('zremrangebyscore()', function () {
+    it('Remove elements by rank', function () {
+      assert(1 === ros.zremrangebyscore('zset.1', 1.5, 2));
+      assert(['a', 'c'].toString() == ros.zrange('zset.1', 0, -1).toString());
+    });
+  });
+
+  describe('zincrby()', function () {
+    it('Increase element score', function () {
+      assert(3.5 === ros.zincrby('zset.1', 1.5, 'b'));
+      assert(['a', 'c', 'b'].toString() === ros.zrange('zset.1', 0, -1).toString());
     });
   });
 });
