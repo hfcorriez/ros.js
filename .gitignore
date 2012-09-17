@@ -1,4 +1,6 @@
-.project
-.settings/
-.buildpath
-.idea/
+.idea
+
+lib-cov
+coverage.html
+
+node_modules

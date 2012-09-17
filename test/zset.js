@@ -1,5 +1,5 @@
 if (typeof module != 'undefined') {
-  var ros = require('./../lib/ros')
+  var ros = require('../')
     , assert = require('assert');
 }
 
