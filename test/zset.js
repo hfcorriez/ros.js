@@ -51,7 +51,7 @@ describe('ZSet', function () {
 
   describe('zrank()', function () {
     it('Get rank of exists value', function () {
-      assert(1 === ros.zrank('zset.1', 'b'));
+      assert(0 === ros.zrank('zset.1', 'a'));
     });
 
     it('Get rank of non-exists value', function () {
@@ -60,6 +60,20 @@ describe('ZSet', function () {
 
     it('Get rank from non-exists set', function () {
       assert(false === ros.zrank('zset.3', 'b'));
+    });
+  });
+
+  describe('zrevrank()', function () {
+    it('Get reverse rank of exists value', function () {
+      assert(2 === ros.zrevrank('zset.1', 'a'));
+    });
+
+    it('Get reverse rank of non-exists value', function () {
+      assert(false === ros.zrevrank('zset.1', 'bsfaasdf'));
+    });
+
+    it('Get reverse rank from non-exists set', function () {
+      assert(false === ros.zrevrank('zset.3', 'b'));
     });
   });
 
@@ -81,6 +95,24 @@ describe('ZSet', function () {
 
     it('Get count of non-exists set', function () {
       assert(0 === ros.zcount('zset.3', 0, -1));
+    });
+  });
+
+  describe('zrangebyscore()', function () {
+    it('Get range with score', function () {
+      assert(['b', 'c'].toString() === ros.zrangebyscore('zset.1', 1.5, 3).toString());
+    });
+  });
+
+  describe('zrevrange()', function () {
+    it('Get reverse range of sorted set', function () {
+      assert(['d', 'c'].toString() === ros.zrevrange('zset.2', 0, -1).toString());
+    });
+  });
+
+  describe('zrevrangebyscore()', function () {
+    it('Get range with score', function () {
+      assert(['c', 'b'].toString() === ros.zrevrangebyscore('zset.1', 1.5, 3).toString());
     });
   });
 });
