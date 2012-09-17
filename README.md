@@ -14,7 +14,7 @@ See api documents  on [redis.io](http://redis.io/commands)
 
 ### in NodeJs
 
-```html
+```javascript
 var ros = require('ros');
 ros.set('test', 'abc');
 var test = ros.get('test'); // test = "abc"
