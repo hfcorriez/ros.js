@@ -1,6 +1,6 @@
 ## About
 
-ros.js is a redis like storage for javascript, it support both client and server(nodejs), it implements redis api for use as redis like storage
+ros.js is a redis like storage for javascript, it support both client and server(nodejs), it implements redis api. You can use it as memory storage simple and quickly both in client and server.
 
 [![Build Status](https://secure.travis-ci.org/hfcorriez/ros.js.png)](http://travis-ci.org/hfcorriez/ros.js)
 
