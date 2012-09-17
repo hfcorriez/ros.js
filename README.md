@@ -1,9 +1,8 @@
 ## About
 
-- 基于Redis API实现的Js的数据缓存
-- API和Redis完全相同
-- 适合开发Web App
-- 目前还有一些API尚未实现
+ros.js is a redis like storage for javascript, it support both client and server(nodejs), it implements redis api for use as redis like storage
+
+[![Build Status](https://secure.travis-ci.org/hfcorriez/ros.js.png)](http://travis-ci.org/hfcorriez/ros.js)
 
 See api documents  on [redis.io](http://redis.io/commands)
 
@@ -12,21 +11,29 @@ See api documents  on [redis.io](http://redis.io/commands)
     git clone git://github.com/hfcorriez/ros.js.git
 
 ## Usage
-通用
-____
 
-    <script type="text/javascript" src="ros.js"></script>
+### in NodeJs
+
+```javascript
+    var ros = require('ros');
+    ros.set('test', 'abc');
+    var test = ros.get('test'); // test = "abc"
+```
+
+### Normal in Browser
+
+```javascript
     <script type="text/javascript">
-    ros.set('test', 'mytestvalue');
-    console.log(ros.get('test'));  // log "mytestvalue"
+    ros.set('test', 'abc');
+    var test = ros.get('test');  // test = "abc"
     </script>
+```
 
-jQuery中
-____
+### JQuery in Browser
 
-    <script type="text/javascript" src="ros.js"></script>
-    <script type="text/javascript" src="jquery.ros.js"></script>
+```javascript
     <script type="text/javascript">
-    $.ros.set('test', 'mytestvalue');
-    console.log($.ros.get('test'));  // log "mytestvalue"
+    $.ros.set('test', 'abc');
+    var test = $.ros.get('test');  // test = "abc"
     </script>
+```
