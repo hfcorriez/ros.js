@@ -14,26 +14,29 @@ See api documents  on [redis.io](http://redis.io/commands)
 
 ### in NodeJs
 
-```javascript
-    var ros = require('ros');
-    ros.set('test', 'abc');
-    var test = ros.get('test'); // test = "abc"
+```html
+var ros = require('ros');
+ros.set('test', 'abc');
+var test = ros.get('test'); // test = "abc"
 ```
 
 ### Normal in Browser
 
-```javascript
-    <script type="text/javascript">
-    ros.set('test', 'abc');
-    var test = ros.get('test');  // test = "abc"
-    </script>
+```html
+<script type="text/javascript" src="ros.js">
+<script type="text/javascript">
+ros.set('test', 'abc');
+var test = ros.get('test');  // test = "abc"
+</script>
 ```
 
 ### JQuery in Browser
 
-```javascript
-    <script type="text/javascript">
-    $.ros.set('test', 'abc');
-    var test = $.ros.get('test');  // test = "abc"
-    </script>
+```html
+<script type="text/javascript" src="ros.js">
+<script type="text/javascript" src="jquery.ros.js">
+<script type="text/javascript">
+$.ros.set('test', 'abc');
+var test = $.ros.get('test');  // test = "abc"
+</script>
 ```
