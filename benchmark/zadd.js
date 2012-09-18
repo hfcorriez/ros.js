@@ -2,16 +2,22 @@ var ros = require('./../');
 
 benchmark(
   function () {
-    for (var i = 0; i < 100000; i++) {
-      ros.set('bm.' + i, i);
+    for (var i = 0; i < 10000; i++) {
+      ros.zadd('zset', i, i);
     }
-    return 'set()';
+    return 'zadd()';
   },
   function () {
-    for (var i = 0; i < 100000; i++) {
-      ros.get('bm.' + i);
+    for (var i = 0; i < 10000; i++) {
+      ros.zrange('zset', i, i + 10);
     }
-    return 'get()';
+    return 'zrange()';
+  },
+  function () {
+    for (var i = 0; i < 10000; i++) {
+      ros.zrangebyscore('zset', i, i + 10);
+    }
+    return 'zrangebyscore()';
   }
 );
 
